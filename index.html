@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>馬刺し注文</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<style>
+:root{
+  --sumi:#17161a; --sumi70:#55525a; --sumi40:#918e96;
+  --tile:#eceeeb; --paper:#fff; --rule:#dcdfdb;
+  --sakura:#b2263c; --sakura-ink:#8c1b2e; --shimo:#f4dde1;
+  --display:'Shippori Mincho B1',serif;
+  --body:'Zen Kaku Gothic New',system-ui,sans-serif;
+  --num:'Roboto Mono',ui-monospace,monospace;
+  --pad:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--tile);color:var(--sumi);font-family:var(--body);font-size:15px;line-height:1.7;-webkit-text-size-adjust:100%;padding-bottom:196px}
+.wrap{max-width:520px;margin:0 auto;background:var(--paper);min-height:100vh}
+.num{font-family:var(--num);font-weight:700;font-feature-settings:"tnum"}
+
+.hd{position:relative;overflow:hidden;color:#fff;padding:26px var(--pad) 22px;background:var(--sakura)}
+.hd::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:repeating-linear-gradient(72deg,transparent 0 9px,rgba(255,255,255,.34) 9px 10px,transparent 10px 13px,rgba(255,255,255,.18) 13px 14px)}
+.hd-eyebrow{position:relative;z-index:1;font-size:11px;letter-spacing:.34em;margin:0 0 6px;opacity:.9}
+.hd h1{position:relative;z-index:1;font-family:var(--display);font-weight:800;font-size:34px;letter-spacing:.14em;margin:0;line-height:1.2}
+.hd-sub{position:relative;z-index:1;margin:8px 0 0;font-size:12.5px;opacity:.92}
+
+.notes{border-bottom:1px solid var(--rule);background:#fbfaf8}
+.notes summary{padding:13px var(--pad);font-size:13px;font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.notes summary::-webkit-details-marker{display:none}
+.notes summary::after{content:"開く";font-size:11px;color:var(--sakura);font-weight:500}
+.notes[open] summary::after{content:"閉じる"}
+.notes ul{margin:0;padding:0 var(--pad) 16px 34px;font-size:12.5px;color:var(--sumi70);line-height:1.85}
+
+.sec{border-bottom:8px solid var(--tile)}
+.sec-hd{display:flex;align-items:center;gap:10px;padding:16px var(--pad);cursor:pointer;list-style:none}
+.sec-hd::-webkit-details-marker{display:none}
+.sec-hd h2{font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:.1em;margin:0;flex:1}
+.sec-hd .kome{font-size:11px;color:var(--sumi40)}
+.sec-hd .chev{font-size:11px;color:var(--sumi40);transition:transform .2s}
+details[open] > .sec-hd .chev{transform:rotate(180deg)}
+.pick{background:var(--sakura);color:#fff;font-size:11px;font-weight:700;border-radius:99px;padding:1px 9px;font-family:var(--num)}
+.sec-note{padding:0 var(--pad) 12px;font-size:12.5px;color:var(--sumi70);margin:0}
+
+.item{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:13px var(--pad) 13px 20px;border-top:1px solid var(--rule);position:relative;align-items:center}
+.item::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:transparent;transition:background .18s}
+.item.on::before{background:var(--sakura)}
+.item.on{background:#fdf7f8}
+.item-name{font-weight:700;font-size:15px;line-height:1.45}
+.item-note{display:block;font-size:11.5px;color:var(--sumi40);font-weight:400;line-height:1.5}
+.item-price{text-align:right;font-size:11px;color:var(--sumi70);white-space:nowrap}
+.item-price .num{font-size:14px;color:var(--sumi)}
+.item-sum{font-size:12px;color:var(--sumi40);align-self:center}
+.item.on .item-sum{color:var(--sumi)}
+.item-sum .num{font-size:14.5px}
+.tag{display:inline-block;margin-left:6px;background:var(--shimo);color:var(--sakura-ink);font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:2px}
+
+.stepper{display:flex;align-items:center;border:1.5px solid var(--sumi);border-radius:3px;overflow:hidden;background:#fff}
+.stepper button{width:40px;height:36px;border:0;background:#fff;font-size:19px;line-height:1;color:var(--sumi);cursor:pointer;font-family:var(--body)}
+.stepper button:disabled{color:#c9c7cb}
+.stepper button:active:not(:disabled){background:var(--shimo)}
+.qty{min-width:64px;text-align:center;font-family:var(--num);font-weight:700;font-size:15px;border-left:1.5px solid var(--sumi);border-right:1.5px solid var(--sumi);height:36px;line-height:36px}
+.qty small{font-size:10.5px;font-weight:500;margin-left:1px}
+.qty.zero{color:var(--sumi40)}
+
+.free-rows{padding:0 var(--pad) 6px}
+.free-row{display:flex;gap:8px;margin-bottom:8px}
+.free-row input{flex:1}
+.free-row input.q{flex:0 0 92px}
+.free-row button{flex:0 0 38px;border:1px solid var(--rule);background:#fff;border-radius:3px;color:var(--sumi40);font-size:16px;cursor:pointer}
+.addbtn{margin:0 var(--pad) 16px;padding:9px 14px;border:1.5px dashed var(--rule);background:#fff;border-radius:3px;font-family:var(--body);font-size:13px;font-weight:700;color:var(--sumi70);cursor:pointer;width:calc(100% - var(--pad)*2)}
+
+input,select,textarea{font-family:var(--body);font-size:16px;color:var(--sumi);background:#fff;border:1.5px solid var(--rule);border-radius:3px;padding:10px 12px;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--sakura);outline-offset:1px;border-color:var(--sakura)}
+.field{padding:0 var(--pad) 14px}
+.field label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;margin-bottom:5px}
+.field label .req{color:var(--sakura);margin-left:4px;font-size:11px}
+.field .hint{font-size:11.5px;color:var(--sumi40);margin:5px 0 0}
+.err{border-color:var(--sakura)!important;background:#fdf7f8}
+.errmsg{color:var(--sakura);font-size:12px;font-weight:700;margin:5px 0 0}
+
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 var(--pad) 12px}
+.seg button{padding:13px 8px;border:1.5px solid var(--rule);background:#fff;border-radius:3px;font-family:var(--body);font-size:13.5px;font-weight:700;color:var(--sumi70);cursor:pointer;line-height:1.4}
+.seg button small{display:block;font-size:10.5px;font-weight:400;color:var(--sumi40);margin-top:2px}
+.seg button.on{border-color:var(--sakura);background:#fdf7f8;color:var(--sakura-ink);box-shadow:inset 0 0 0 1px var(--sakura)}
+.seg button.on small{color:var(--sakura-ink)}
+.card{margin:0 var(--pad) 14px;padding:12px 14px;background:#fbfaf8;border-left:3px solid var(--sakura);font-size:13px;line-height:1.8}
+.card b{font-size:13.5px}
+
+.tally{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--paper);border-top:1.5px solid var(--sumi);padding:0 var(--pad) calc(12px + env(safe-area-inset-bottom));max-width:520px;margin:0 auto;box-shadow:0 -8px 24px rgba(23,22,26,.09)}
+.rail{height:3px;background:var(--rule);margin:0 calc(var(--pad)*-1)}
+.rail i{display:block;height:3px;background:var(--sakura);width:0;transition:width .3s ease}
+.rail-txt{font-size:11.5px;color:var(--sumi70);padding:7px 0 0;text-align:center}
+.rail-txt b{color:var(--sakura);font-family:var(--num)}
+.tally-row{display:flex;align-items:center;gap:12px;padding:4px 0 10px}
+.seal{flex:0 0 auto;width:44px;height:44px;border:2.5px solid var(--sakura);border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:22px;color:var(--sakura);transform:rotate(-9deg);opacity:.92;box-shadow:inset 0 0 0 1.5px #fff, inset 0 0 8px rgba(178,38,60,.14)}
+.tally-txt{flex:1;min-width:0}
+.tally-lbl{display:block;font-size:11.5px;color:var(--sumi70);letter-spacing:.06em}
+.tally-sub{display:block;font-size:11px;color:var(--sumi40);font-family:var(--num);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tally-num{font-family:var(--num);font-weight:700;font-size:25px}
+.cta{display:block;width:100%;padding:15px;border:0;border-radius:3px;background:var(--sumi);color:#fff;font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:.16em;cursor:pointer}
+.cta:disabled{background:#b6b4ba}
+.cta.go{background:var(--sakura)}
+
+.sheet{position:fixed;inset:0;z-index:40;background:var(--paper);overflow-y:auto;display:none;max-width:520px;margin:0 auto}
+.sheet.show{display:block}
+.sheet-hd{position:sticky;top:0;background:var(--sumi);color:#fff;padding:14px var(--pad);display:flex;justify-content:space-between;align-items:center;z-index:2}
+.sheet-hd h2{font-family:var(--display);font-size:17px;letter-spacing:.14em;margin:0;font-weight:600}
+.sheet-hd button{background:none;border:0;color:#fff;font-size:13px;cursor:pointer;font-family:var(--body)}
+.rcpt{padding:8px var(--pad) 0}
+.rcpt h3{font-size:11.5px;letter-spacing:.2em;color:var(--sumi40);margin:20px 0 8px;font-weight:700}
+.rcpt-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px dotted var(--rule);font-size:14px}
+.rcpt-row span:last-child{font-family:var(--num);font-weight:700;white-space:nowrap}
+.rcpt-row.total{border-bottom:0;border-top:1.5px solid var(--sumi);margin-top:6px;padding-top:12px;font-weight:700;font-size:16px}
+.rcpt-row.total span:last-child{font-size:22px}
+.rcpt-row .q{color:var(--sumi40);font-family:var(--num);font-size:12.5px;margin-left:6px}
+.rcpt-info{font-size:13.5px;color:var(--sumi70);line-height:1.9;border-left:3px solid var(--rule);padding-left:12px}
+.sheet-foot{padding:22px var(--pad) calc(28px + env(safe-area-inset-bottom))}
+.caution{background:#fbfaf8;border:1px solid var(--rule);padding:12px 14px;font-size:12px;color:var(--sumi70);line-height:1.8;margin:18px 0 0}
+
+.done{position:fixed;inset:0;z-index:50;background:var(--paper);display:none;place-items:center;text-align:center;padding:32px;max-width:520px;margin:0 auto}
+.done.show{display:grid}
+.done .seal{width:96px;height:96px;font-size:46px;border-width:4px;margin:0 auto 20px;animation:stamp .45s cubic-bezier(.2,1.3,.4,1)}
+@keyframes stamp{0%{transform:rotate(-30deg) scale(2.2);opacity:0}60%{opacity:1}100%{transform:rotate(-9deg) scale(1);opacity:.92}}
+.done h2{font-family:var(--display);font-size:24px;letter-spacing:.1em;margin:0 0 10px}
+.done p{font-size:14px;color:var(--sumi70);margin:0 0 6px}
+.done .amt{font-family:var(--num);font-size:32px;font-weight:700;margin:16px 0 4px}
+.done .cta{margin-top:26px}
+
+.foot{padding:22px var(--pad) 30px;font-size:11.5px;color:var(--sumi40);line-height:1.8}
+.banner{background:#4b2f22;color:#fff;font-size:12px;padding:8px var(--pad);text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="banner" class="banner" hidden></div>
+
+  <header class="hd">
+    <p class="hd-eyebrow">共同購入 ・ 桜肉</p>
+    <h1>馬刺し注文</h1>
+    <p class="hd-sub">数量は50g単位。金額はその場で計算します。</p>
+  </header>
+
+  <details class="notes">
+    <summary>ご注文の前に（価格・受け取りについて）</summary>
+    <ul>
+      <li>価格は店頭価格表（税込）です。値上がりする場合があります。</li>
+      <li>ブロックでのお渡しです。カットは各自でお願いします。</li>
+      <li>チルド商品です。発送から7日が賞味期限です。</li>
+      <li>100g未満は10%の手数料がかかります（タテガミは50g単位）。</li>
+      <li>個別発送は送料が約1,200円、16,500円以上で無料です。</li>
+      <li>特上霜降り『幻』は入荷が読めないため、日時指定ができません。</li>
+      <li>不明点は公式LINEにコメントしてください。</li>
+    </ul>
+  </details>
+
+  <main id="menu"></main>
+
+  <section class="sec">
+    <div class="sec-hd" style="cursor:default"><h2>受け取り方法</h2></div>
+    <div class="seg" id="seg">
+      <button type="button" data-mode="個別発送" class="on">個別発送<small>自宅などへ直送</small></button>
+      <button type="button" data-mode="一括発送">まとめ発送<small>まとめて1か所へ</small></button>
+    </div>
+
+    <div id="group-block" hidden>
+      <div class="field">
+        <label for="f-group">発送先<span class="req">必須</span></label>
+        <select id="f-group"></select>
+      </div>
+      <div class="card" id="group-card"></div>
+    </div>
+
+    <div id="own-block">
+      <div class="field">
+        <label for="f-date">配送希望日<span class="req">必須</span></label>
+        <input type="date" id="f-date">
+        <p class="hint" id="date-hint"></p>
+      </div>
+      <div class="field">
+        <label for="f-time">時間帯</label>
+        <select id="f-time">
+          <option value="指定なし">指定なし</option>
+          <option value="午前中(8〜12時)">午前中(8〜12時)</option>
+          <option value="12〜16時">12〜16時</option>
+          <option value="16〜18時">16〜18時</option>
+          <option value="18〜20時">18〜20時</option>
+          <option value="19〜21時">19〜21時</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-zip">郵便番号</label>
+        <input type="text" id="f-zip" inputmode="numeric" autocomplete="postal-code" placeholder="123-4567">
+      </div>
+      <div class="field">
+        <label for="f-addr">住所<span class="req">必須</span></label>
+        <input type="text" id="f-addr" autocomplete="street-address" placeholder="○○県○市○○区○○1-2-3 ○○ハイツ101">
+      </div>
+      <div class="field">
+        <label for="f-tel">電話番号<span class="req">必須</span></label>
+        <input type="tel" id="f-tel" autocomplete="tel" placeholder="080-1234-5678">
+        <p class="hint">配送業者からの連絡に使います。</p>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="f-name">お名前<span class="req">必須</span></label>
+      <input type="text" id="f-name" autocomplete="name" placeholder="熊本 太郎">
+    </div>
+    <div class="field">
+      <label for="f-kana">フリガナ</label>
+      <input type="text" id="f-kana" placeholder="クマモト タロウ">
+    </div>
+    <div class="field">
+      <label for="f-memo">連絡事項</label>
+      <textarea id="f-memo" rows="2" placeholder="例：100gずつ2つに分けてください"></textarea>
+    </div>
+  </section>
+
+  <p class="foot">
+    表示は仮計算の金額です。確定金額とヤマト運輸のお問い合わせ番号は、発送後に公式LINEでお知らせします。
+  </p>
+</div>
+
+<footer class="tally">
+  <div class="rail"><i id="rail-fill"></i></div>
+  <p class="rail-txt" id="rail-txt">まずは商品を選んでください</p>
+  <div class="tally-row">
+    <span class="seal">仮</span>
+    <div class="tally-txt">
+      <span class="tally-lbl">仮計算合計</span>
+      <span class="tally-sub" id="tally-sub">商品 0 ＋ 送料 0</span>
+    </div>
+    <span class="tally-num" id="tally-num">¥0</span>
+  </div>
+  <button class="cta" id="btn-confirm" disabled>注文内容を確認</button>
+</footer>
+
+<div class="sheet" id="sheet">
+  <div class="sheet-hd">
+    <h2>注文内容の確認</h2>
+    <button type="button" id="btn-back">修正する</button>
+  </div>
+  <div class="rcpt" id="rcpt"></div>
+  <div class="sheet-foot">
+    <button class="cta go" id="btn-send">この内容で注文する</button>
+    <p class="errmsg" id="send-err" hidden></p>
+  </div>
+</div>
+
+<div class="done" id="done">
+  <div>
+    <span class="seal">仮</span>
+    <h2>注文を受け付けました</h2>
+    <p id="done-msg">控えを公式LINEに送りました。</p>
+    <p class="amt" id="done-amt">¥0</p>
+    <p>仮計算合計</p>
+    <p style="margin-top:14px;font-size:12.5px">確定金額とヤマト運輸のお問い合わせ番号は、発送後に公式LINEでお知らせします。</p>
+    <button class="cta" id="btn-close">閉じる</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   設定：この2つを書き換えてください
+   ============================================================ */
+const CONFIG = {
+  LIFF_ID: 'xxxxxxxxxx-xxxxxxxx',   // LINE Developers で発行した LIFF ID
+  GAS_URL: '',                       // GAS ウェブアプリの /exec URL
+  EARLIEST_DELIVERY: '2026-08-01',
+  SHIPPING_FEE: 1200,
+  FREE_SHIPPING_MIN: 16500,
+  SOY_PER_GRAM: 700
+};
+
+/* GAS に接続できないときの予備リスト（正はスプレッドシートの商品マスタ） */
+const FALLBACK_PRODUCTS = [
+  {id:'aka_chateau',cat:'赤身馬刺し',name:'赤身シャトーブリアン（ヒレ）',poName:'赤身シャトーブリアン',note:'いちばん柔らかい赤身',unit:'g',price:1500,per:100,step:50,min:50,sur:true},
+  {id:'aka_tokujo',cat:'赤身馬刺し',name:'赤身特上馬刺し（ロース）',poName:'赤身特上馬刺し',note:'きめ細かいロース',unit:'g',price:1380,per:100,step:50,min:50,sur:true},
+  {id:'aka_jo',cat:'赤身馬刺し',name:'赤身上馬刺し（上モモ・バラ）',poName:'赤身上馬刺し',note:'定番の上ランク',unit:'g',price:1200,per:100,step:50,min:50,sur:true},
+  {id:'aka_std',cat:'赤身馬刺し',name:'赤身馬刺し（モモ・肩）',poName:'赤身馬刺し',note:'あっさり。量を食べたい方に',unit:'g',price:1000,per:100,step:50,min:50,sur:true},
+  {id:'aka_kori',cat:'赤身馬刺し',name:'コリコリ赤身（脇・首）',poName:'コリコリ赤身',note:'歯ごたえのある部位',unit:'g',price:900,per:100,step:50,min:50,sur:true},
+  {id:'aka_young',cat:'赤身馬刺し',name:'ヤング赤身（ヤング・ツト）',poName:'ヤング赤身',note:'やわらかい若馬の赤身',unit:'g',price:700,per:100,step:50,min:50,sur:true},
+  {id:'aka_shio',cat:'赤身馬刺し',name:'赤身塩焼き用',poName:'赤身塩焼き用',note:'焼いて食べる用',unit:'g',price:398,per:100,step:50,min:50,sur:true},
+  {id:'heart',cat:'赤身馬刺し',name:'ハート',poName:'ハート',note:'コリッとした食感',unit:'g',price:980,per:100,step:50,min:50,sur:true},
+  {id:'liver',cat:'赤身馬刺し',name:'レバー',poName:'レバー',note:'濃厚。鮮度重視の一品',unit:'g',price:3000,per:100,step:50,min:50,sur:true},
+  {id:'tategami',cat:'赤身馬刺し',name:'タテガミ白',poName:'タテガミ',note:'脂の甘み。赤身と重ねて',unit:'g',price:500,per:50,step:50,min:50,sur:false},
+  {id:'uma_tataki',cat:'赤身馬刺し',name:'馬タタキ',poName:'馬タタキ',note:'表面を炙った一品',unit:'g',price:1200,per:100,step:50,min:50,sur:true},
+  {id:'tori_tataki',cat:'赤身馬刺し',name:'鶏タタキ',poName:'鶏タタキ',note:'鶏の炙りタタキ',unit:'g',price:400,per:100,step:50,min:50,sur:true},
+
+  {id:'shi_maboroshi',cat:'霜降り馬刺し',name:'特上霜降り『幻』（三枚バラ幻）',poName:'特上霜降り幻',note:'サシ有り。入荷未定・日時指定不可',unit:'g',price:4500,per:100,step:50,min:50,sur:true},
+  {id:'shi_kiwami',cat:'霜降り馬刺し',name:'特上霜降り『極』（三枚バラ極）',poName:'特上霜降り極',note:'サシ有り',unit:'g',price:3800,per:100,step:50,min:50,sur:true},
+  {id:'shi_sakura',cat:'霜降り馬刺し',name:'上霜降り『桜』（オビ2・カイノミ）',poName:'上霜降り桜',note:'サシ有り',unit:'g',price:3500,per:100,step:50,min:50,sur:true},
+  {id:'shi_jo',cat:'霜降り馬刺し',name:'上霜降り（肩ロース・尻口・イチボ）',poName:'上霜降り',note:'サシ有り',unit:'g',price:2800,per:100,step:50,min:50,sur:true},
+  {id:'shi_rib',cat:'霜降り馬刺し',name:'霜降り（リブロース・ラム・ヒレ）',poName:'霜降り（リブロース・ラム・ヒレ）',note:'サシ弱い',unit:'g',price:2300,per:100,step:50,min:50,sur:true},
+  {id:'shi_waki',cat:'霜降り馬刺し',name:'霜降り（脇・肩）',poName:'霜降り（脇・肩）',note:'サシ有り',unit:'g',price:2000,per:100,step:50,min:50,sur:true},
+  {id:'shi_kata',cat:'霜降り馬刺し',name:'霜降り（肩・モモ）柔らかめ',poName:'霜降り（肩・モモ）',note:'サシ薄い',unit:'g',price:1700,per:100,step:50,min:50,sur:true},
+  {id:'shi_aka',cat:'霜降り馬刺し',name:'霜降り赤身（肩・モモ）硬め',poName:'霜降り赤身（肩・モモ）',note:'赤身寄り',unit:'g',price:1400,per:100,step:50,min:50,sur:true},
+  {id:'shi_kori',cat:'霜降り馬刺し',name:'コリコリ馬刺し（ヤング）',poName:'コリコリ馬刺し',note:'サシ粗い',unit:'g',price:1000,per:100,step:50,min:50,sur:true},
+  {id:'futaego',cat:'霜降り馬刺し',name:'フタエゴ',poName:'フタエゴ',note:'固め。三層の食感',unit:'g',price:1500,per:100,step:50,min:50,sur:true},
+  {id:'usuego',cat:'霜降り馬刺し',name:'薄エゴ',poName:'薄エゴ',note:'固め',unit:'g',price:1000,per:100,step:50,min:50,sur:true},
+  {id:'barahimo_s',cat:'霜降り馬刺し',name:'上バラひも（刺身用）',poName:'上バラひも',note:'筋あり歯ごたえあり',unit:'g',price:1500,per:100,step:50,min:50,sur:true},
+  {id:'barahimo_y',cat:'霜降り馬刺し',name:'バラヒモ（焼き用）',poName:'バラヒモ焼き用',note:'焼いて食べる用',unit:'g',price:1200,per:100,step:50,min:50,sur:true},
+
+  {id:'suji_skin',cat:'その他',name:'スキンナースジ（1kg）',poName:'スキンナースジ1kg',note:'煮込み用',unit:'袋',price:800,per:1,step:1,min:1,sur:false},
+  {id:'suji_tebiki',cat:'その他',name:'手引きスジ（500g）',poName:'手引きスジ500g',note:'煮込み用',unit:'袋',price:700,per:1,step:1,min:1,sur:false},
+  {id:'kosagi',cat:'その他',name:'こさぎ（250g）',poName:'こさぎ250g',note:'',unit:'袋',price:800,per:1,step:1,min:1,sur:false},
+
+  {id:'soy',cat:'醤油',name:'九州の甘い醤油 150ml',poName:'醤油',note:'馬刺しに合う甘口',unit:'本',price:324,per:1,step:1,min:1,sur:false}
+];
+
+const state = {products:[], groups:[], qty:{}, others:[{name:'',qty:''}],
+               mode:'個別発送', groupId:'', profile:null, idToken:'', sending:false};
+const yen = n => '¥' + Math.round(n).toLocaleString('ja-JP');
+const $ = id => document.getElementById(id);
+const esc = s => String(s||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ── 金額計算（GAS 側と同じルール） ── */
+function lineTotal(p, q){
+  if(!q) return {sum:0, sur:false};
+  const sur = p.sur && p.unit === 'g' && q < 100;
+  return {sum: Math.round(p.price * q / p.per * (sur ? 1.1 : 1)), sur};
+}
+function totals(){
+  let goods = 0, meat = 0;
+  state.products.forEach(p => {
+    const q = state.qty[p.id] || 0;
+    goods += lineTotal(p, q).sum;
+    if(p.unit === 'g') meat += q;
+  });
+  const hasOther = state.others.some(o => o.name.trim());
+  const shipping = (state.mode === '一括発送' || goods === 0) ? 0
+    : (goods >= CONFIG.FREE_SHIPPING_MIN ? 0 : CONFIG.SHIPPING_FEE);
+  return {goods, meat, shipping, total: goods + shipping, hasOther};
+}
+const unitLabel = p => p.unit === 'g' ? p.per + 'g' : p.unit;
+function poLabel(p, q){
+  if(p.unit === 'g') return p.poName + q + 'g';
+  if(p.unit === '本') return p.poName + q + '本';
+  return q > 1 ? p.poName + '×' + q : p.poName;
+}
+
+/* ── 商品一覧 ── */
+function buildMenu(){
+  const cats = [];
+  state.products.forEach(p => { if(cats.indexOf(p.cat) < 0) cats.push(p.cat); });
+  let html = '';
+  cats.forEach((cat, ci) => {
+    html += `<details class="sec" ${ci === 0 ? 'open' : ''}>
+      <summary class="sec-hd">
+        <h2>${cat}</h2>
+        <span class="pick" id="pick-${ci}" hidden>0</span>
+        <span class="kome">${cat === '醤油' ? '1本 150ml' : cat === 'その他' ? '袋単位' : '50g単位'}</span>
+        <span class="chev">▼</span>
+      </summary>`;
+    if(cat === '醤油') html += `<p class="sec-note" id="soy-hint">目安は肉700gにつき1本です。</p>`;
+    state.products.filter(p => p.cat === cat).forEach(p => {
+      html += `
+      <div class="item" id="row-${p.id}">
+        <div><span class="item-name">${p.name}</span><span class="item-note">${p.note||''}</span></div>
+        <div class="item-price"><span class="num">${p.price.toLocaleString('ja-JP')}</span> 円/${unitLabel(p)}</div>
+        <div class="item-sum" id="sum-${p.id}">—</div>
+        <div class="stepper">
+          <button type="button" data-id="${p.id}" data-d="-1" aria-label="${p.name}を減らす">−</button>
+          <output class="qty zero" id="qty-${p.id}">0<small>${p.unit}</small></output>
+          <button type="button" data-id="${p.id}" data-d="1" aria-label="${p.name}を増やす">＋</button>
+        </div>
+      </div>`;
+    });
+    html += `</details>`;
+  });
+
+  html += `
+  <details class="sec">
+    <summary class="sec-hd">
+      <h2>リストにない品</h2>
+      <span class="pick" id="pick-other" hidden>0</span>
+      <span class="kome">金額は店確認</span>
+      <span class="chev">▼</span>
+    </summary>
+    <p class="sec-note">価格表にない品や特別な注文はこちらに。品名と数量をご記入ください。</p>
+    <div class="free-rows" id="free-rows"></div>
+    <button type="button" class="addbtn" id="btn-add">＋ 品目を追加する</button>
+  </details>`;
+
+  $('menu').innerHTML = html;
+  state.cats = cats;
+
+  $('menu').addEventListener('click', e => {
+    const b = e.target.closest('button[data-id]');
+    if(b){ e.preventDefault(); return bump(b.dataset.id, Number(b.dataset.d)); }
+    if(e.target.id === 'btn-add'){ state.others.push({name:'',qty:''}); renderFree(); return; }
+    const rm = e.target.closest('button[data-rm]');
+    if(rm){ state.others.splice(Number(rm.dataset.rm),1); if(!state.others.length) state.others.push({name:'',qty:''}); renderFree(); render(); }
+  });
+  $('menu').addEventListener('input', e => {
+    const f = e.target.closest('[data-fi]');
+    if(f){ state.others[Number(f.dataset.fi)][f.dataset.fk] = f.value; render(); }
+  });
+  renderFree();
+}
+
+function renderFree(){
+  $('free-rows').innerHTML = state.others.map((o,i) => `
+    <div class="free-row">
+      <input type="text" data-fi="${i}" data-fk="name" value="${esc(o.name)}" placeholder="品名（例：ハート）">
+      <input type="text" class="q" data-fi="${i}" data-fk="qty" value="${esc(o.qty)}" placeholder="100g">
+      <button type="button" data-rm="${i}" aria-label="この行を削除">×</button>
+    </div>`).join('');
+}
+
+function bump(id, dir){
+  const p = state.products.filter(x => x.id === id)[0];
+  const cur = state.qty[id] || 0;
+  let next = cur + dir * p.step;
+  if(next < p.min) next = dir > 0 ? p.min : 0;
+  state.qty[id] = Math.max(0, next);
+  render();
+}
+
+/* ── 再描画 ── */
+function render(){
+  state.products.forEach(p => {
+    const q = state.qty[p.id] || 0;
+    const {sum, sur} = lineTotal(p, q);
+    const row = $('row-' + p.id), out = $('qty-' + p.id);
+    row.classList.toggle('on', q > 0);
+    out.classList.toggle('zero', q === 0);
+    out.innerHTML = `${q}<small>${p.unit}</small>`;
+    $('sum-' + p.id).innerHTML = q === 0 ? '—'
+      : `小計 <span class="num">${sum.toLocaleString('ja-JP')}</span> 円${sur ? '<span class="tag">100g未満 +10%</span>' : ''}`;
+    row.querySelector('button[data-d="-1"]').disabled = q === 0;
+  });
+
+  (state.cats || []).forEach((cat, ci) => {
+    const n = state.products.filter(p => p.cat === cat && state.qty[p.id]).length;
+    const b = $('pick-' + ci);
+    if(b){ b.hidden = n === 0; b.textContent = n; }
+  });
+  const on = state.others.filter(o => o.name.trim()).length;
+  $('pick-other').hidden = on === 0;
+  $('pick-other').textContent = on;
+
+  const t = totals();
+  const soyHint = $('soy-hint');
+  if(soyHint && t.meat){
+    soyHint.textContent = `目安は肉700gにつき1本。お肉${t.meat}gなら${Math.max(1, Math.ceil(t.meat / CONFIG.SOY_PER_GRAM))}本くらいです。`;
+  }
+
+  $('tally-sub').textContent = `商品 ${t.goods.toLocaleString('ja-JP')} ＋ 送料 ${t.shipping.toLocaleString('ja-JP')}`;
+  $('tally-num').textContent = yen(t.total);
+  $('rail-fill').style.width = Math.min(100, t.goods / CONFIG.FREE_SHIPPING_MIN * 100) + '%';
+  $('rail-txt').innerHTML =
+    t.goods === 0 ? 'まずは商品を選んでください'
+    : state.mode === '一括発送' ? 'まとめ発送のため送料はかかりません'
+    : t.shipping === 0 ? '送料無料です'
+    : `送料無料まであと <b>${(CONFIG.FREE_SHIPPING_MIN - t.goods).toLocaleString('ja-JP')}</b> 円`;
+  $('btn-confirm').disabled = !(t.goods > 0 || t.hasOther);
+}
+
+/* ── 受け取り方法 ── */
+function setMode(mode){
+  state.mode = mode;
+  Array.prototype.forEach.call($('seg').children, b => b.classList.toggle('on', b.dataset.mode === mode));
+  $('group-block').hidden = mode !== '一括発送';
+  $('own-block').hidden = mode === '一括発送';
+  renderGroupCard();
+  render();
+}
+function renderGroupCard(){
+  const g = state.groups.filter(x => x.id === state.groupId)[0];
+  $('group-card').innerHTML = g
+    ? `<b>${esc(g.label)}</b><br>${esc(g.date).replace(/-/g,'/')} ${esc(g.time)}<br>
+       ${esc(g.name)} 様あて / ${esc(g.zip)} ${esc(g.addr)}<br>
+       <span style="color:#918e96;font-size:12px">まとめて1口で届くため、送料はかかりません。</span>`
+    : '<span style="color:#918e96">発送先を選んでください。</span>';
+}
+
+/* ── 入力チェック ── */
+function deliv(){
+  return {
+    date: $('f-date').value, time: $('f-time').value,
+    name: $('f-name').value.trim(), kana: $('f-kana').value.trim(),
+    zip: $('f-zip').value.trim(), addr: $('f-addr').value.trim(),
+    tel: $('f-tel').value.trim(), memo: $('f-memo').value.trim()
+  };
+}
+function validate(){
+  const d = deliv();
+  const need = state.mode === '一括発送'
+    ? [['f-group', state.groupId], ['f-name', d.name]]
+    : [['f-date', d.date], ['f-name', d.name], ['f-addr', d.addr], ['f-tel', d.tel]];
+  let first = null;
+  need.forEach(([id, v]) => {
+    const el = $(id); el.classList.toggle('err', !v);
+    if(!v && !first) first = el;
+  });
+  if(!first && state.mode !== '一括発送' && d.date < CONFIG.EARLIEST_DELIVERY) first = $('f-date');
+  if(first){
+    first.classList.add('err');
+    first.scrollIntoView({block:'center', behavior:'smooth'});
+    first.focus({preventScroll:true});
+    return null;
+  }
+  return d;
+}
+
+/* ── 確認 ── */
+function openSheet(){
+  const d = validate(); if(!d) return;
+  const t = totals();
+  const g = state.groups.filter(x => x.id === state.groupId)[0];
+  let rows = '';
+  state.products.forEach(p => {
+    const q = state.qty[p.id] || 0; if(!q) return;
+    const {sum, sur} = lineTotal(p, q);
+    rows += `<div class="rcpt-row"><span>${esc(p.poName)}<span class="q">${q}${p.unit}${sur?' +10%':''}</span></span><span>${sum.toLocaleString('ja-JP')}</span></div>`;
+  });
+  state.others.filter(o => o.name.trim()).forEach(o => {
+    rows += `<div class="rcpt-row"><span>${esc(o.name)}<span class="q">${esc(o.qty)}</span></span><span>店確認</span></div>`;
+  });
+  $('rcpt').innerHTML = `
+    <h3>ご注文</h3>${rows}
+    <div class="rcpt-row"><span>送料${state.mode === '一括発送' ? '（まとめ発送）' : t.shipping === 0 ? '（無料）' : '（概算）'}</span><span>${t.shipping.toLocaleString('ja-JP')}</span></div>
+    <div class="rcpt-row total"><span>仮計算合計</span><span>${yen(t.total)}</span></div>
+    <h3>受け取り</h3>
+    <div class="rcpt-info">
+      ${state.mode === '一括発送' && g
+        ? `${esc(g.label)}（まとめ発送）<br>${esc(g.date).replace(/-/g,'/')} ${esc(g.time)}<br>${esc(g.name)} 様あて / ${esc(g.addr)}<br>注文者：${esc(d.name)}`
+        : `${d.date} ${d.time}<br>${esc(d.name)} 様 ${d.kana ? '（' + esc(d.kana) + '）' : ''}<br>${esc(d.zip)} ${esc(d.addr)}<br>${esc(d.tel)}`}
+      ${d.memo ? '<br>連絡事項：' + esc(d.memo) : ''}
+    </div>
+    <div class="caution">
+      表示は仮計算です。値上がり・欠品・「リストにない品」の金額により、確定金額は変わります。<br>
+      チルド便のため、発送から7日が賞味期限です。ブロックのままお届けします。
+    </div>`;
+  $('sheet').classList.add('show');
+  window.scrollTo(0, 0);
+}
+
+/* ── 送信 ── */
+async function send(){
+  if(state.sending) return;
+  state.sending = true;
+  $('btn-send').disabled = true;
+  $('btn-send').textContent = '送信中…';
+  $('send-err').hidden = true;
+
+  const t = totals();
+  const payload = {
+    idToken: state.idToken,
+    userId: state.profile ? state.profile.userId : '',
+    displayName: state.profile ? state.profile.displayName : '',
+    shipMode: state.mode,
+    groupId: state.groupId,
+    items: state.products.filter(p => state.qty[p.id]).map(p => ({id:p.id, qty:state.qty[p.id]})),
+    others: state.others.filter(o => o.name.trim()).map(o => ({name:o.name.trim(), qty:o.qty.trim()})),
+    delivery: deliv(),
+    clientTotal: t.total
+  };
+
+  try{
+    if(!CONFIG.GAS_URL) throw new Error('preview');
+    const res = await fetch(CONFIG.GAS_URL, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},   // ← プリフライト回避のため text/plain
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if(!data.ok) throw new Error(data.error || '保存に失敗しました');
+    finish(data.total);
+  }catch(err){
+    if(err.message === 'preview'){ finish(t.total, true); return; }
+    $('send-err').textContent = '送信できませんでした。電波の良い場所でもう一度お試しください。（' + err.message + '）';
+    $('send-err').hidden = false;
+    $('btn-send').disabled = false;
+    $('btn-send').textContent = 'この内容で注文する';
+    state.sending = false;
+  }
+}
+function finish(total, preview){
+  $('done-amt').textContent = yen(total);
+  if(preview) $('done-msg').textContent = 'プレビュー表示です（まだ送信されていません）。';
+  $('sheet').classList.remove('show');
+  $('done').classList.add('show');
+}
+
+/* ── 起動 ── */
+async function init(){
+  $('f-date').min = CONFIG.EARLIEST_DELIVERY;
+  $('date-hint').textContent = CONFIG.EARLIEST_DELIVERY.replace(/-/g,'/') + ' 以降でご指定ください。';
+
+  state.products = FALLBACK_PRODUCTS;
+  if(CONFIG.GAS_URL){
+    try{
+      const d = await (await fetch(CONFIG.GAS_URL)).json();
+      if(d.ok && d.products && d.products.length) state.products = d.products;
+      if(d.groups) state.groups = d.groups;
+      if(d.config){
+        CONFIG.SHIPPING_FEE = d.config.shippingFee || CONFIG.SHIPPING_FEE;
+        CONFIG.FREE_SHIPPING_MIN = d.config.freeShippingMin || CONFIG.FREE_SHIPPING_MIN;
+        if(d.config.earliestDate){
+          CONFIG.EARLIEST_DELIVERY = d.config.earliestDate;
+          $('f-date').min = d.config.earliestDate;
+          $('date-hint').textContent = d.config.earliestDate.replace(/-/g,'/') + ' 以降でご指定ください。';
+        }
+      }
+    }catch(e){ /* 予備リストで続行 */ }
+  }
+
+  const sel = $('f-group');
+  if(state.groups.length){
+    sel.innerHTML = '<option value="">選んでください</option>' +
+      state.groups.map(g => `<option value="${esc(g.id)}">${esc(g.label)}（${esc(g.date).replace(/-/g,'/')} ${esc(g.time)}）</option>`).join('');
+  }else{
+    $('seg').querySelector('[data-mode="一括発送"]').disabled = true;
+    sel.innerHTML = '<option value="">まとめ発送の受付はありません</option>';
+  }
+
+  buildMenu();
+  render();
+
+  try{
+    await liff.init({liffId: CONFIG.LIFF_ID});
+    if(!liff.isLoggedIn()){ liff.login(); return; }
+    state.profile = await liff.getProfile();
+    state.idToken = liff.getIDToken() || '';
+    if(!$('f-name').value) $('f-name').value = state.profile.displayName || '';
+  }catch(e){
+    $('banner').hidden = false;
+    $('banner').textContent = 'LINEの外で開いています（動作確認モード）';
+  }
+}
+
+$('seg').addEventListener('click', e => {
+  const b = e.target.closest('button[data-mode]');
+  if(b && !b.disabled) setMode(b.dataset.mode);
+});
+$('f-group').addEventListener('change', e => {
+  state.groupId = e.target.value;
+  e.target.classList.toggle('err', !state.groupId);
+  renderGroupCard();
+});
+$('btn-confirm').addEventListener('click', openSheet);
+$('btn-back').addEventListener('click', () => $('sheet').classList.remove('show'));
+$('btn-send').addEventListener('click', send);
+$('btn-close').addEventListener('click', () => {
+  if(window.liff && liff.isInClient && liff.isInClient()) liff.closeWindow();
+  else location.reload();
+});
+init();
+</script>
+</body>
+</html>
