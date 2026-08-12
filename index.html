@@ -20,7 +20,7 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{background:var(--tile);color:var(--sumi);font-family:var(--body);font-size:15px;line-height:1.7;-webkit-text-size-adjust:100%;padding-bottom:196px}
+body{background:var(--tile);color:var(--sumi);font-family:var(--body);font-size:15px;line-height:1.7;-webkit-text-size-adjust:100%;padding-bottom:208px}
 .wrap{max-width:520px;margin:0 auto;background:var(--paper);min-height:100vh}
 .num{font-family:var(--num);font-weight:700;font-feature-settings:"tnum"}
 
@@ -30,6 +30,20 @@ body{background:var(--tile);color:var(--sumi);font-family:var(--body);font-size:
 .hd-eyebrow{position:relative;z-index:1;font-size:11px;letter-spacing:.34em;margin:0 0 6px;opacity:.9}
 .hd h1{position:relative;z-index:1;font-family:var(--display);font-weight:800;font-size:34px;letter-spacing:.14em;margin:0;line-height:1.2}
 .hd-sub{position:relative;z-index:1;margin:8px 0 0;font-size:12.5px;opacity:.92}
+
+.diag{padding:11px var(--pad);font-size:12.5px;line-height:1.65;display:none}
+.diag.show{display:block}
+.diag.warn{background:#fff4d6;color:#6b4c00;border-bottom:1px solid #e7d79f}
+.diag.bad{background:var(--sakura);color:#fff}
+.diag b{display:block;font-size:13px;margin-bottom:2px}
+.diag code{font-family:var(--num);font-size:11.5px;background:rgba(0,0,0,.12);padding:0 4px;border-radius:2px}
+
+/* おかえりバー */
+.welcome{display:none;align-items:center;gap:10px;padding:12px var(--pad);background:#fbfaf8;border-bottom:1px solid var(--rule);font-size:13px}
+.welcome.show{display:flex}
+.welcome .w-txt{flex:1;min-width:0;line-height:1.5}
+.welcome .w-txt small{display:block;color:var(--sumi40);font-size:11.5px}
+.welcome button{flex:0 0 auto;border:1.5px solid var(--sakura);background:#fff;color:var(--sakura-ink);border-radius:3px;padding:8px 12px;font-family:var(--body);font-size:12.5px;font-weight:700;cursor:pointer}
 
 .notes{border-bottom:1px solid var(--rule);background:#fbfaf8}
 .notes summary{padding:13px var(--pad);font-size:13px;font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
@@ -75,23 +89,29 @@ details[open] > .sec-hd .chev{transform:rotate(180deg)}
 .free-row input.q{flex:0 0 92px}
 .free-row button{flex:0 0 38px;border:1px solid var(--rule);background:#fff;border-radius:3px;color:var(--sumi40);font-size:16px;cursor:pointer}
 .addbtn{margin:0 var(--pad) 16px;padding:9px 14px;border:1.5px dashed var(--rule);background:#fff;border-radius:3px;font-family:var(--body);font-size:13px;font-weight:700;color:var(--sumi70);cursor:pointer;width:calc(100% - var(--pad)*2)}
+.addbtn:disabled{opacity:.4;cursor:default}
 
 input,select,textarea{font-family:var(--body);font-size:16px;color:var(--sumi);background:#fff;border:1.5px solid var(--rule);border-radius:3px;padding:10px 12px;width:100%}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--sakura);outline-offset:1px;border-color:var(--sakura)}
+textarea{resize:vertical}
 .field{padding:0 var(--pad) 14px}
 .field label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;margin-bottom:5px}
 .field label .req{color:var(--sakura);margin-left:4px;font-size:11px}
-.field .hint{font-size:11.5px;color:var(--sumi40);margin:5px 0 0}
+.field .hint{font-size:11.5px;color:var(--sumi40);margin:5px 0 0;display:flex;justify-content:space-between;gap:8px}
+.field .hint .count{font-family:var(--num);flex:0 0 auto}
+.field .hint .count.over{color:var(--sakura);font-weight:700}
 .err{border-color:var(--sakura)!important;background:#fdf7f8}
 .errmsg{color:var(--sakura);font-size:12px;font-weight:700;margin:5px 0 0}
 
-.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 var(--pad) 12px}
+.seg{display:grid;gap:8px;padding:0 var(--pad) 12px}
+.seg.c2{grid-template-columns:1fr 1fr}
+.seg.c3{grid-template-columns:1fr 1fr 1fr}
 .seg button{padding:13px 8px;border:1.5px solid var(--rule);background:#fff;border-radius:3px;font-family:var(--body);font-size:13.5px;font-weight:700;color:var(--sumi70);cursor:pointer;line-height:1.4}
 .seg button small{display:block;font-size:10.5px;font-weight:400;color:var(--sumi40);margin-top:2px}
 .seg button.on{border-color:var(--sakura);background:#fdf7f8;color:var(--sakura-ink);box-shadow:inset 0 0 0 1px var(--sakura)}
 .seg button.on small{color:var(--sakura-ink)}
+.badge{display:inline-block;background:var(--sakura);color:#fff;font-size:9.5px;font-weight:700;padding:0 5px;border-radius:2px;margin-left:4px;vertical-align:1px}
 .card{margin:0 var(--pad) 14px;padding:12px 14px;background:#fbfaf8;border-left:3px solid var(--sakura);font-size:13px;line-height:1.8}
-.card b{font-size:13.5px}
 
 .tally{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--paper);border-top:1.5px solid var(--sumi);padding:0 var(--pad) calc(12px + env(safe-area-inset-bottom));max-width:520px;margin:0 auto;box-shadow:0 -8px 24px rgba(23,22,26,.09)}
 .rail{height:3px;background:var(--rule);margin:0 calc(var(--pad)*-1)}
@@ -102,6 +122,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--sakura);outline-
 .seal{flex:0 0 auto;width:44px;height:44px;border:2.5px solid var(--sakura);border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:22px;color:var(--sakura);transform:rotate(-9deg);opacity:.92;box-shadow:inset 0 0 0 1.5px #fff, inset 0 0 8px rgba(178,38,60,.14)}
 .tally-txt{flex:1;min-width:0}
 .tally-lbl{display:block;font-size:11.5px;color:var(--sumi70);letter-spacing:.06em}
+.tally-lbl .w{color:var(--sakura-ink);font-family:var(--num);font-weight:700}
 .tally-sub{display:block;font-size:11px;color:var(--sumi40);font-family:var(--num);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tally-num{font-family:var(--num);font-weight:700;font-size:25px}
 .cta{display:block;width:100%;padding:15px;border:0;border-radius:3px;background:var(--sumi);color:#fff;font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:.16em;cursor:pointer}
@@ -123,6 +144,23 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--sakura);outline-
 .rcpt-info{font-size:13.5px;color:var(--sumi70);line-height:1.9;border-left:3px solid var(--rule);padding-left:12px}
 .sheet-foot{padding:22px var(--pad) calc(28px + env(safe-area-inset-bottom))}
 .caution{background:#fbfaf8;border:1px solid var(--rule);padding:12px 14px;font-size:12px;color:var(--sumi70);line-height:1.8;margin:18px 0 0}
+.pass{margin:0 0 16px}
+.pass label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}
+
+/* 履歴 */
+.hist{padding:8px var(--pad) 24px}
+.hcard{border:1px solid var(--rule);border-radius:3px;margin-bottom:14px;overflow:hidden}
+.hcard-hd{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fbfaf8;padding:10px 13px;border-bottom:1px solid var(--rule)}
+.hcard-hd .d{font-family:var(--num);font-size:12.5px;font-weight:700}
+.hcard-hd .s{font-size:11px;color:var(--sumi40)}
+.hcard-bd{padding:11px 13px;font-size:13px;line-height:1.7}
+.hcard-bd .po{color:var(--sumi70);word-break:break-all}
+.hcard-ft{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 13px;border-top:1px dotted var(--rule)}
+.hcard-ft .t{font-family:var(--num);font-weight:700;font-size:16px}
+.hcard-ft .t small{font-size:11px;color:var(--sumi40);font-weight:400;font-family:var(--body);margin-right:4px}
+.hcard-ft button{border:1.5px solid var(--sumi);background:#fff;border-radius:3px;padding:8px 12px;font-family:var(--body);font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap}
+.hfixed{background:var(--shimo);color:var(--sakura-ink);font-size:12px;padding:7px 13px;font-weight:700}
+.hempty{text-align:center;color:var(--sumi40);font-size:13.5px;padding:40px 0}
 
 .done{position:fixed;inset:0;z-index:50;background:var(--paper);display:none;place-items:center;text-align:center;padding:32px;max-width:520px;margin:0 auto}
 .done.show{display:grid}
@@ -134,19 +172,23 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--sakura);outline-
 .done .cta{margin-top:26px}
 
 .foot{padding:22px var(--pad) 30px;font-size:11.5px;color:var(--sumi40);line-height:1.8}
-.banner{background:#4b2f22;color:#fff;font-size:12px;padding:8px var(--pad);text-align:center}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div id="banner" class="banner" hidden></div>
-
   <header class="hd">
     <p class="hd-eyebrow">共同購入 ・ 桜肉</p>
     <h1>馬刺し注文</h1>
     <p class="hd-sub">数量は50g単位。金額はその場で計算します。</p>
   </header>
+
+  <div class="diag" id="diag"></div>
+
+  <div class="welcome" id="welcome">
+    <div class="w-txt" id="welcome-txt"></div>
+    <button type="button" id="btn-hist">過去の注文</button>
+  </div>
 
   <details class="notes">
     <summary>ご注文の前に（価格・受け取りについて）</summary>
@@ -165,10 +207,8 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--sakura);outline-
 
   <section class="sec">
     <div class="sec-hd" style="cursor:default"><h2>受け取り方法</h2></div>
-    <div class="seg" id="seg">
-      <button type="button" data-mode="個別発送" class="on">個別発送<small>自宅などへ直送</small></button>
-      <button type="button" data-mode="一括発送">まとめ発送<small>まとめて1か所へ</small></button>
-    </div>
+    <div class="seg c2" id="seg-recv"></div>
+    <div class="card" id="recv-guide" hidden></div>
 
     <div id="group-block" hidden>
       <div class="field">
@@ -178,11 +218,11 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--sakura);outline-
       <div class="card" id="group-card"></div>
     </div>
 
-    <div id="own-block">
+    <div id="date-block">
       <div class="field">
         <label for="f-date">配送希望日<span class="req">必須</span></label>
         <input type="date" id="f-date">
-        <p class="hint" id="date-hint"></p>
+        <p class="hint"><span id="date-hint"></span></p>
       </div>
       <div class="field">
         <label for="f-time">時間帯</label>
@@ -195,33 +235,46 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--sakura);outline-
           <option value="19〜21時">19〜21時</option>
         </select>
       </div>
+    </div>
+
+    <div id="addr-block">
       <div class="field">
-        <label for="f-zip">郵便番号</label>
-        <input type="text" id="f-zip" inputmode="numeric" autocomplete="postal-code" placeholder="123-4567">
+        <label for="f-zip">郵便番号<span class="req">必須</span></label>
+        <input type="text" id="f-zip" inputmode="numeric" autocomplete="postal-code" maxlength="8" placeholder="1234567">
+        <p class="hint"><span>ハイフンは自動で入ります。数字だけでOKです。</span></p>
       </div>
       <div class="field">
         <label for="f-addr">住所<span class="req">必須</span></label>
-        <input type="text" id="f-addr" autocomplete="street-address" placeholder="○○県○市○○区○○1-2-3 ○○ハイツ101">
+        <input type="text" id="f-addr" autocomplete="street-address" maxlength="100" data-max="100" placeholder="○○県○市○○区○○1-2-3 ○○ハイツ101">
+        <p class="hint"><span>建物名・部屋番号まで</span><span class="count" data-for="f-addr">0/100</span></p>
       </div>
       <div class="field">
         <label for="f-tel">電話番号<span class="req">必須</span></label>
-        <input type="tel" id="f-tel" autocomplete="tel" placeholder="080-1234-5678">
-        <p class="hint">配送業者からの連絡に使います。</p>
+        <input type="text" id="f-tel" inputmode="tel" autocomplete="tel" maxlength="15" placeholder="09012345678">
+        <p class="hint"><span>ハイフンは自動で入ります。数字だけでOKです。</span></p>
       </div>
     </div>
 
     <div class="field">
       <label for="f-name">お名前<span class="req">必須</span></label>
-      <input type="text" id="f-name" autocomplete="name" placeholder="熊本 太郎">
+      <input type="text" id="f-name" autocomplete="name" maxlength="30" data-max="30" placeholder="熊本 太郎">
+      <p class="hint"><span></span><span class="count" data-for="f-name">0/30</span></p>
     </div>
     <div class="field">
       <label for="f-kana">フリガナ</label>
-      <input type="text" id="f-kana" placeholder="クマモト タロウ">
+      <input type="text" id="f-kana" maxlength="30" data-max="30" placeholder="クマモト タロウ">
     </div>
     <div class="field">
       <label for="f-memo">連絡事項</label>
-      <textarea id="f-memo" rows="2" placeholder="例：100gずつ2つに分けてください"></textarea>
+      <textarea id="f-memo" rows="2" maxlength="200" data-max="200" placeholder="例：100gずつ2つに分けてください"></textarea>
+      <p class="hint"><span></span><span class="count" data-for="f-memo">0/200</span></p>
     </div>
+  </section>
+
+  <section class="sec" id="pay-sec">
+    <div class="sec-hd" style="cursor:default"><h2>お支払い方法</h2></div>
+    <p class="sec-note">確定金額のご案内時に、選んだ方法でのお支払い先をお送りします。</p>
+    <div class="seg c2" id="seg-pay"></div>
   </section>
 
   <p class="foot">
@@ -235,7 +288,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--sakura);outline-
   <div class="tally-row">
     <span class="seal">仮</span>
     <div class="tally-txt">
-      <span class="tally-lbl">仮計算合計</span>
+      <span class="tally-lbl" id="tally-lbl">仮計算合計</span>
       <span class="tally-sub" id="tally-sub">商品 0 ＋ 送料 0</span>
     </div>
     <span class="tally-num" id="tally-num">¥0</span>
@@ -243,6 +296,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--sakura);outline-
   <button class="cta" id="btn-confirm" disabled>注文内容を確認</button>
 </footer>
 
+<!-- 確認 -->
 <div class="sheet" id="sheet">
   <div class="sheet-hd">
     <h2>注文内容の確認</h2>
@@ -250,19 +304,33 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--sakura);outline-
   </div>
   <div class="rcpt" id="rcpt"></div>
   <div class="sheet-foot">
+    <div class="pass" id="pass-block" hidden>
+      <label for="f-pass">合言葉</label>
+      <input type="text" id="f-pass" maxlength="40" autocomplete="off" placeholder="幹事から聞いた合言葉">
+    </div>
     <button class="cta go" id="btn-send">この内容で注文する</button>
     <p class="errmsg" id="send-err" hidden></p>
   </div>
 </div>
 
+<!-- 履歴 -->
+<div class="sheet" id="hsheet">
+  <div class="sheet-hd">
+    <h2>過去のご注文</h2>
+    <button type="button" id="btn-hclose">閉じる</button>
+  </div>
+  <div class="hist" id="hist"></div>
+</div>
+
+<!-- 完了 -->
 <div class="done" id="done">
   <div>
     <span class="seal">仮</span>
     <h2>注文を受け付けました</h2>
-    <p id="done-msg">控えを公式LINEに送りました。</p>
+    <p id="done-msg">注文控えをLINEのトークに送りました。</p>
     <p class="amt" id="done-amt">¥0</p>
     <p>仮計算合計</p>
-    <p style="margin-top:14px;font-size:12.5px">確定金額とヤマト運輸のお問い合わせ番号は、発送後に公式LINEでお知らせします。</p>
+    <p style="margin-top:14px;font-size:12.5px">確定金額とお支払いのご案内は、金額の確定後に公式LINEでお送りします。</p>
     <button class="cta" id="btn-close">閉じる</button>
   </div>
 </div>
@@ -273,14 +341,16 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--sakura);outline-
    ============================================================ */
 const CONFIG = {
   LIFF_ID: '2010851149-ppI59211',   // LINE Developers で発行した LIFF ID
-  GAS_URL: 'https://script.google.com/macros/s/AKfycby56G1Hiu8iMeChNTvokji4dJr6dGM94z0Xzoshs7QDhrzMEhshX3LU_8fx88JZyDsD/exec',                       // GAS ウェブアプリの /exec URL
+  GAS_URL: 'https://script.google.com/macros/s/AKfycby56G1Hiu8iMeChNTvokji4dJr6dGM94z0Xzoshs7QDhrzMEhshX3LU_8fx88JZyDsD/exec',                       // GAS ウェブアプリの /exec URL（.../exec で終わる）
   EARLIEST_DELIVERY: '2026-08-01',
   SHIPPING_FEE: 1200,
   FREE_SHIPPING_MIN: 16500,
   SOY_PER_GRAM: 700
 };
 
-/* GAS に接続できないときの予備リスト（正はスプレッドシートの商品マスタ） */
+const LIMIT = { name:30, kana:30, addr:100, memo:200, otherName:40, otherQty:20, otherRows:10 };
+
+/* GAS に接続できないときの予備リスト（正はスプレッドシートの各マスタ） */
 const FALLBACK_PRODUCTS = [
   {id:'aka_chateau',cat:'赤身馬刺し',name:'赤身シャトーブリアン（ヒレ）',poName:'赤身シャトーブリアン',note:'いちばん柔らかい赤身',unit:'g',price:1500,per:100,step:50,min:50,sur:true},
   {id:'aka_tokujo',cat:'赤身馬刺し',name:'赤身特上馬刺し（ロース）',poName:'赤身特上馬刺し',note:'きめ細かいロース',unit:'g',price:1380,per:100,step:50,min:50,sur:true},
@@ -291,7 +361,7 @@ const FALLBACK_PRODUCTS = [
   {id:'aka_shio',cat:'赤身馬刺し',name:'赤身塩焼き用',poName:'赤身塩焼き用',note:'焼いて食べる用',unit:'g',price:398,per:100,step:50,min:50,sur:true},
   {id:'heart',cat:'赤身馬刺し',name:'ハート',poName:'ハート',note:'コリッとした食感',unit:'g',price:980,per:100,step:50,min:50,sur:true},
   {id:'liver',cat:'赤身馬刺し',name:'レバー',poName:'レバー',note:'濃厚。鮮度重視の一品',unit:'g',price:3000,per:100,step:50,min:50,sur:true},
-  {id:'tategami',cat:'赤身馬刺し',name:'タテガミ白',poName:'タテガミ',note:'脂の甘み。赤身と重ねて',unit:'g',price:500,per:50,step:50,min:50,sur:false},
+  {id:'tategami',cat:'赤身馬刺し',name:'タテガミ白',poName:'タテガミ',note:'脂の甘み。50g単位の価格',unit:'g',price:500,per:50,step:50,min:50,sur:false},
   {id:'uma_tataki',cat:'赤身馬刺し',name:'馬タタキ',poName:'馬タタキ',note:'表面を炙った一品',unit:'g',price:1200,per:100,step:50,min:50,sur:true},
   {id:'tori_tataki',cat:'赤身馬刺し',name:'鶏タタキ',poName:'鶏タタキ',note:'鶏の炙りタタキ',unit:'g',price:400,per:100,step:50,min:50,sur:true},
 
@@ -315,19 +385,57 @@ const FALLBACK_PRODUCTS = [
 
   {id:'soy',cat:'醤油',name:'九州の甘い醤油 150ml',poName:'醤油',note:'馬刺しに合う甘口',unit:'本',price:324,per:1,step:1,min:1,sur:false}
 ];
+const FALLBACK_RECV = [
+  {id:'ship', label:'個別発送', note:'自宅などへ直送', tag:'', shipping:true,  needAddr:true,  needDate:true,  pickGroup:false, guide:''},
+  {id:'group',label:'まとめ発送',note:'まとめて1か所へ',tag:'', shipping:false, needAddr:false, needDate:false, pickGroup:true,
+   guide:'まとめて1口で届くため、送料はかかりません。'}
+];
+const FALLBACK_PAY = [
+  {id:'paypay',label:'PayPay',   note:'確定金額をPayPayで'},
+  {id:'kotora',label:'ことら送金',note:'銀行アプリのことら送金で'},
+  {id:'bank',  label:'銀行振込', note:'指定口座へお振込'},
+  {id:'cash',  label:'現金',     note:'受け取り時に現金で'}
+];
 
-const state = {products:[], groups:[], qty:{}, others:[{name:'',qty:''}],
-               mode:'個別発送', groupId:'', profile:null, idToken:'', sending:false};
+const state = {
+  products:[], groups:[], recvAll:[], recv:[], pays:[], qty:{}, others:[{name:'',qty:''}],
+  recvId:'', groupId:'', payId:'', tags:[], history:[], profile:null, idToken:'',
+  online:false, needPass:false, sending:false
+};
 const yen = n => '¥' + Math.round(n).toLocaleString('ja-JP');
 const $ = id => document.getElementById(id);
-const esc = s => String(s||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-/* ── 金額計算（GAS 側と同じルール） ── */
+function clean(v, max){
+  let s = String(v == null ? '' : v);
+  try{ s = s.normalize('NFKC'); }catch(e){}
+  s = s.replace(/[\u200B-\u200F\u202A-\u202E\u2060\uFEFF]/g, '');
+  s = s.replace(/[\u0000-\u001F\u007F]/g, ' ');
+  s = s.replace(/\s+/g, ' ').trim();
+  return s.length > max ? s.slice(0, max) : s;
+}
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g,
+  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function normZip(v){
+  const d = String(v).replace(/[^\d]/g, '').slice(0, 7);
+  return d.length > 3 ? d.slice(0, 3) + '-' + d.slice(3) : d;
+}
+function normTel(v){
+  const d = String(v).replace(/[^\d]/g, '').slice(0, 11);
+  if(d.length === 11) return d.slice(0,3) + '-' + d.slice(3,7) + '-' + d.slice(7);
+  if(d.length === 10) return /^0[36]/.test(d)
+    ? d.slice(0,2) + '-' + d.slice(2,6) + '-' + d.slice(6)
+    : d.slice(0,3) + '-' + d.slice(3,6) + '-' + d.slice(6);
+  return d;
+}
+
+/* ── 金額計算 ── */
 function lineTotal(p, q){
   if(!q) return {sum:0, sur:false};
   const sur = p.sur && p.unit === 'g' && q < 100;
   return {sum: Math.round(p.price * q / p.per * (sur ? 1.1 : 1)), sur};
 }
+function curRecv(){ return state.recv.filter(m => m.id === state.recvId)[0] || null; }
 function totals(){
   let goods = 0, meat = 0;
   state.products.forEach(p => {
@@ -336,15 +444,23 @@ function totals(){
     if(p.unit === 'g') meat += q;
   });
   const hasOther = state.others.some(o => o.name.trim());
-  const shipping = (state.mode === '一括発送' || goods === 0) ? 0
+  const m = curRecv();
+  const shipping = (!m || !m.shipping || goods === 0) ? 0
     : (goods >= CONFIG.FREE_SHIPPING_MIN ? 0 : CONFIG.SHIPPING_FEE);
-  return {goods, meat, shipping, total: goods + shipping, hasOther};
+  return {goods, weight: meat, shipping, total: goods + shipping, hasOther};
 }
 const unitLabel = p => p.unit === 'g' ? p.per + 'g' : p.unit;
 function poLabel(p, q){
   if(p.unit === 'g') return p.poName + q + 'g';
   if(p.unit === '本') return p.poName + q + '本';
   return q > 1 ? p.poName + '×' + q : p.poName;
+}
+const fmtW = g => g >= 1000 ? (g / 1000).toFixed(g % 1000 === 0 ? 0 : 1) + 'kg' : g + 'g';
+
+function diag(level, title, msg){
+  const el = $('diag');
+  el.className = 'diag show ' + level;
+  el.innerHTML = '<b>' + esc(title) + '</b>' + msg;
 }
 
 /* ── 商品一覧 ── */
@@ -353,42 +469,34 @@ function buildMenu(){
   state.products.forEach(p => { if(cats.indexOf(p.cat) < 0) cats.push(p.cat); });
   let html = '';
   cats.forEach((cat, ci) => {
-    html += `<details class="sec" ${ci === 0 ? 'open' : ''}>
-      <summary class="sec-hd">
-        <h2>${cat}</h2>
-        <span class="pick" id="pick-${ci}" hidden>0</span>
-        <span class="kome">${cat === '醤油' ? '1本 150ml' : cat === 'その他' ? '袋単位' : '50g単位'}</span>
-        <span class="chev">▼</span>
-      </summary>`;
-    if(cat === '醤油') html += `<p class="sec-note" id="soy-hint">目安は肉700gにつき1本です。</p>`;
+    html += '<details class="sec"' + (ci === 0 ? ' open' : '') + '>' +
+      '<summary class="sec-hd"><h2>' + esc(cat) + '</h2>' +
+      '<span class="pick" id="pick-' + ci + '" hidden>0</span>' +
+      '<span class="kome">' + (cat === '醤油' ? '1本 150ml' : cat === 'その他' ? '袋単位' : '50g単位') + '</span>' +
+      '<span class="chev">▼</span></summary>';
+    if(cat === '醤油') html += '<p class="sec-note" id="soy-hint">目安は肉700gにつき1本です。</p>';
     state.products.filter(p => p.cat === cat).forEach(p => {
-      html += `
-      <div class="item" id="row-${p.id}">
-        <div><span class="item-name">${p.name}</span><span class="item-note">${p.note||''}</span></div>
-        <div class="item-price"><span class="num">${p.price.toLocaleString('ja-JP')}</span> 円/${unitLabel(p)}</div>
-        <div class="item-sum" id="sum-${p.id}">—</div>
-        <div class="stepper">
-          <button type="button" data-id="${p.id}" data-d="-1" aria-label="${p.name}を減らす">−</button>
-          <output class="qty zero" id="qty-${p.id}">0<small>${p.unit}</small></output>
-          <button type="button" data-id="${p.id}" data-d="1" aria-label="${p.name}を増やす">＋</button>
-        </div>
-      </div>`;
+      html += '<div class="item" id="row-' + esc(p.id) + '">' +
+        '<div><span class="item-name">' + esc(p.name) + '</span>' +
+        '<span class="item-note">' + esc(p.note) + '</span></div>' +
+        '<div class="item-price"><span class="num">' + p.price.toLocaleString('ja-JP') +
+        '</span> 円/' + esc(unitLabel(p)) + '</div>' +
+        '<div class="item-sum" id="sum-' + esc(p.id) + '">—</div>' +
+        '<div class="stepper">' +
+        '<button type="button" data-id="' + esc(p.id) + '" data-d="-1" aria-label="' + esc(p.name) + 'を減らす">−</button>' +
+        '<output class="qty zero" id="qty-' + esc(p.id) + '">0<small>' + esc(p.unit) + '</small></output>' +
+        '<button type="button" data-id="' + esc(p.id) + '" data-d="1" aria-label="' + esc(p.name) + 'を増やす">＋</button>' +
+        '</div></div>';
     });
-    html += `</details>`;
+    html += '</details>';
   });
 
-  html += `
-  <details class="sec">
-    <summary class="sec-hd">
-      <h2>リストにない品</h2>
-      <span class="pick" id="pick-other" hidden>0</span>
-      <span class="kome">金額は店確認</span>
-      <span class="chev">▼</span>
-    </summary>
-    <p class="sec-note">価格表にない品や特別な注文はこちらに。品名と数量をご記入ください。</p>
-    <div class="free-rows" id="free-rows"></div>
-    <button type="button" class="addbtn" id="btn-add">＋ 品目を追加する</button>
-  </details>`;
+  html += '<details class="sec"><summary class="sec-hd"><h2>リストにない品</h2>' +
+    '<span class="pick" id="pick-other" hidden>0</span>' +
+    '<span class="kome">金額は店確認</span><span class="chev">▼</span></summary>' +
+    '<p class="sec-note">価格表にない品や特別な注文はこちらに。品名と数量をご記入ください（最大' + LIMIT.otherRows + '件）。</p>' +
+    '<div class="free-rows" id="free-rows"></div>' +
+    '<button type="button" class="addbtn" id="btn-add">＋ 品目を追加する</button></details>';
 
   $('menu').innerHTML = html;
   state.cats = cats;
@@ -396,28 +504,42 @@ function buildMenu(){
   $('menu').addEventListener('click', e => {
     const b = e.target.closest('button[data-id]');
     if(b){ e.preventDefault(); return bump(b.dataset.id, Number(b.dataset.d)); }
-    if(e.target.id === 'btn-add'){ state.others.push({name:'',qty:''}); renderFree(); return; }
+    if(e.target.id === 'btn-add'){
+      if(state.others.length < LIMIT.otherRows){ state.others.push({name:'',qty:''}); renderFree(); }
+      return;
+    }
     const rm = e.target.closest('button[data-rm]');
-    if(rm){ state.others.splice(Number(rm.dataset.rm),1); if(!state.others.length) state.others.push({name:'',qty:''}); renderFree(); render(); }
+    if(rm){
+      state.others.splice(Number(rm.dataset.rm), 1);
+      if(!state.others.length) state.others.push({name:'',qty:''});
+      renderFree(); render();
+    }
   });
   $('menu').addEventListener('input', e => {
     const f = e.target.closest('[data-fi]');
-    if(f){ state.others[Number(f.dataset.fi)][f.dataset.fk] = f.value; render(); }
+    if(!f) return;
+    const max = f.dataset.fk === 'name' ? LIMIT.otherName : LIMIT.otherQty;
+    if(f.value.length > max) f.value = f.value.slice(0, max);
+    state.others[Number(f.dataset.fi)][f.dataset.fk] = f.value;
+    render();
   });
   renderFree();
 }
 
 function renderFree(){
-  $('free-rows').innerHTML = state.others.map((o,i) => `
-    <div class="free-row">
-      <input type="text" data-fi="${i}" data-fk="name" value="${esc(o.name)}" placeholder="品名（例：ハート）">
-      <input type="text" class="q" data-fi="${i}" data-fk="qty" value="${esc(o.qty)}" placeholder="100g">
-      <button type="button" data-rm="${i}" aria-label="この行を削除">×</button>
-    </div>`).join('');
+  $('free-rows').innerHTML = state.others.map((o,i) =>
+    '<div class="free-row">' +
+    '<input type="text" data-fi="' + i + '" data-fk="name" maxlength="' + LIMIT.otherName +
+      '" value="' + esc(o.name) + '" placeholder="品名（例：ハート）">' +
+    '<input type="text" class="q" data-fi="' + i + '" data-fk="qty" maxlength="' + LIMIT.otherQty +
+      '" value="' + esc(o.qty) + '" placeholder="100g">' +
+    '<button type="button" data-rm="' + i + '" aria-label="この行を削除">×</button></div>').join('');
+  $('btn-add').disabled = state.others.length >= LIMIT.otherRows;
 }
 
 function bump(id, dir){
   const p = state.products.filter(x => x.id === id)[0];
+  if(!p) return;
   const cur = state.qty[id] || 0;
   let next = cur + dir * p.step;
   if(next < p.min) next = dir > 0 ? p.min : 0;
@@ -431,11 +553,13 @@ function render(){
     const q = state.qty[p.id] || 0;
     const {sum, sur} = lineTotal(p, q);
     const row = $('row-' + p.id), out = $('qty-' + p.id);
+    if(!row) return;
     row.classList.toggle('on', q > 0);
     out.classList.toggle('zero', q === 0);
-    out.innerHTML = `${q}<small>${p.unit}</small>`;
+    out.innerHTML = q + '<small>' + esc(p.unit) + '</small>';
     $('sum-' + p.id).innerHTML = q === 0 ? '—'
-      : `小計 <span class="num">${sum.toLocaleString('ja-JP')}</span> 円${sur ? '<span class="tag">100g未満 +10%</span>' : ''}`;
+      : '小計 <span class="num">' + sum.toLocaleString('ja-JP') + '</span> 円' +
+        (sur ? '<span class="tag">100g未満 +10%</span>' : '');
     row.querySelector('button[data-d="-1"]').disabled = q === 0;
   });
 
@@ -450,63 +574,182 @@ function render(){
 
   const t = totals();
   const soyHint = $('soy-hint');
-  if(soyHint && t.meat){
-    soyHint.textContent = `目安は肉700gにつき1本。お肉${t.meat}gなら${Math.max(1, Math.ceil(t.meat / CONFIG.SOY_PER_GRAM))}本くらいです。`;
+  if(soyHint && t.weight){
+    soyHint.textContent = '目安は肉700gにつき1本。お肉' + t.weight + 'gなら' +
+      Math.max(1, Math.ceil(t.weight / CONFIG.SOY_PER_GRAM)) + '本くらいです。';
   }
 
-  $('tally-sub').textContent = `商品 ${t.goods.toLocaleString('ja-JP')} ＋ 送料 ${t.shipping.toLocaleString('ja-JP')}`;
+  /* 合計欄に合計重量を表示 */
+  $('tally-lbl').innerHTML = t.weight
+    ? '仮計算合計　<span class="w">お肉 ' + fmtW(t.weight) + '</span>'
+    : '仮計算合計';
+  $('tally-sub').textContent = '商品 ' + t.goods.toLocaleString('ja-JP') +
+    ' ＋ 送料 ' + t.shipping.toLocaleString('ja-JP');
   $('tally-num').textContent = yen(t.total);
+
+  const m = curRecv();
   $('rail-fill').style.width = Math.min(100, t.goods / CONFIG.FREE_SHIPPING_MIN * 100) + '%';
   $('rail-txt').innerHTML =
     t.goods === 0 ? 'まずは商品を選んでください'
-    : state.mode === '一括発送' ? 'まとめ発送のため送料はかかりません'
+    : (m && !m.shipping) ? '送料はかかりません'
     : t.shipping === 0 ? '送料無料です'
-    : `送料無料まであと <b>${(CONFIG.FREE_SHIPPING_MIN - t.goods).toLocaleString('ja-JP')}</b> 円`;
+    : '送料無料まであと <b>' + (CONFIG.FREE_SHIPPING_MIN - t.goods).toLocaleString('ja-JP') + '</b> 円';
   $('btn-confirm').disabled = !(t.goods > 0 || t.hasOther);
 }
 
-/* ── 受け取り方法 ── */
-function setMode(mode){
-  state.mode = mode;
-  Array.prototype.forEach.call($('seg').children, b => b.classList.toggle('on', b.dataset.mode === mode));
-  $('group-block').hidden = mode !== '一括発送';
-  $('own-block').hidden = mode === '一括発送';
+/* ── 受取方法（タグで出し分け） ── */
+function buildRecv(){
+  state.recv = state.recvAll.filter(m => !m.tag || state.tags.indexOf(m.tag) >= 0);
+  if(!state.recv.length) state.recv = state.recvAll.filter(m => !m.tag);
+  if(!state.recv.filter(m => m.id === state.recvId).length) state.recvId = state.recv.length ? state.recv[0].id : '';
+
+  const seg = $('seg-recv');
+  seg.className = 'seg ' + (state.recv.length >= 3 ? 'c3' : 'c2');
+  seg.innerHTML = state.recv.map(m =>
+    '<button type="button" data-recv="' + esc(m.id) + '"' + (m.id === state.recvId ? ' class="on"' : '') + '>' +
+    esc(m.label) + (m.tag ? '<span class="badge">限定</span>' : '') +
+    '<small>' + esc(m.note) + '</small></button>').join('');
+  applyRecv();
+}
+function applyRecv(){
+  const m = curRecv();
+  Array.prototype.forEach.call($('seg-recv').children,
+    b => b.classList.toggle('on', b.dataset.recv === state.recvId));
+  $('group-block').hidden = !(m && m.pickGroup);
+  $('date-block').hidden  = !(m && m.needDate);
+  $('addr-block').hidden  = !(m && m.needAddr);
+  $('recv-guide').hidden  = !(m && m.guide);
+  if(m && m.guide) $('recv-guide').textContent = m.guide;
   renderGroupCard();
   render();
 }
 function renderGroupCard(){
   const g = state.groups.filter(x => x.id === state.groupId)[0];
   $('group-card').innerHTML = g
-    ? `<b>${esc(g.label)}</b><br>${esc(g.date).replace(/-/g,'/')} ${esc(g.time)}<br>
-       ${esc(g.name)} 様あて / ${esc(g.zip)} ${esc(g.addr)}<br>
-       <span style="color:#918e96;font-size:12px">まとめて1口で届くため、送料はかかりません。</span>`
+    ? '<b>' + esc(g.label) + '</b><br>' + esc(String(g.date).replace(/-/g,'/')) + ' ' + esc(g.time) + '<br>' +
+      esc(g.name) + ' 様あて / ' + esc(g.zip) + ' ' + esc(g.addr) +
+      '<br><span style="color:#918e96;font-size:12px">まとめて1口で届くため、送料はかかりません。</span>'
     : '<span style="color:#918e96">発送先を選んでください。</span>';
+}
+
+/* ── 支払方法 ── */
+function buildPay(){
+  const seg = $('seg-pay');
+  seg.className = 'seg ' + (state.pays.length >= 3 ? 'c2' : 'c2');
+  seg.innerHTML = state.pays.map(p =>
+    '<button type="button" data-pay="' + esc(p.id) + '"' + (p.id === state.payId ? ' class="on"' : '') + '>' +
+    esc(p.label) + '<small>' + esc(p.note) + '</small></button>').join('');
+  $('pay-sec').hidden = !state.pays.length;
+}
+function setPay(id){
+  state.payId = id;
+  Array.prototype.forEach.call($('seg-pay').children,
+    b => b.classList.toggle('on', b.dataset.pay === state.payId));
+}
+
+/* ── 過去の注文 ── */
+function buildHistory(){
+  const h = state.history;
+  if(!h.length){ $('hist').innerHTML = '<p class="hempty">まだご注文の記録がありません。</p>'; return; }
+  $('hist').innerHTML = h.map((o, i) => {
+    const can = (o.items || []).some(l => state.products.filter(p => p.id === l.id).length);
+    return '<div class="hcard">' +
+      '<div class="hcard-hd"><span class="d">' + esc(o.at) + '</span>' +
+        '<span class="s">' + esc(o.recv) + (o.status ? '・' + esc(o.status) : '') + '</span></div>' +
+      (o.fixed || o.slip
+        ? '<div class="hfixed">' + (o.fixed ? '確定金額 ' + yen(o.fixed) : '') +
+          (o.slip ? '　伝票 ' + esc(o.slip) : '') + '</div>' : '') +
+      '<div class="hcard-bd"><span class="po">' + esc(o.po) + '</span>' +
+        (o.weight ? '<br><span style="color:#918e96;font-size:12px">お肉 ' + fmtW(o.weight) + '</span>' : '') +
+      '</div>' +
+      '<div class="hcard-ft"><span class="t"><small>仮計算</small>' + yen(o.total) + '</span>' +
+        (can ? '<button type="button" data-reorder="' + i + '">この内容で注文</button>'
+             : '<span class="s" style="font-size:11px;color:#918e96">再注文できません</span>') +
+      '</div></div>';
+  }).join('');
+}
+function reorder(i){
+  const o = state.history[i];
+  if(!o) return;
+  state.qty = {};
+  let missing = 0;
+  (o.items || []).forEach(l => {
+    const p = state.products.filter(x => x.id === l.id)[0];
+    if(p) state.qty[p.id] = Number(l.qty) || 0; else missing++;
+  });
+  state.others = [{name:'',qty:''}];
+  if(o.other){
+    const rows = String(o.other).split('\n').filter(String).slice(0, LIMIT.otherRows).map(s => {
+      const m = s.match(/^(.*?)\s+(\S+)$/);
+      return m ? {name:m[1], qty:m[2]} : {name:s, qty:''};
+    });
+    if(rows.length) state.others = rows;
+  }
+  fillProfile({name:o.name, kana:o.kana, zip:o.zip, addr:o.addr, tel:o.tel});
+  if(o.memo) $('f-memo').value = o.memo;
+  renderFree(); render(); updateCounts();
+  $('hsheet').classList.remove('show');
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(missing) alert('現在お取り扱いのない商品が' + missing + '件あったため、そのぶんは除いています。');
+}
+
+function fillProfile(p){
+  if(!p) return;
+  if(p.name) $('f-name').value = clean(p.name, LIMIT.name);
+  if(p.kana) $('f-kana').value = clean(p.kana, LIMIT.kana);
+  if(p.zip)  $('f-zip').value  = normZip(p.zip);
+  if(p.addr) $('f-addr').value = clean(p.addr, LIMIT.addr);
+  if(p.tel)  $('f-tel').value  = normTel(p.tel);
+}
+function updateCounts(){
+  document.querySelectorAll('[data-max]').forEach(el => {
+    const max = Number(el.dataset.max);
+    const c = document.querySelector('.count[data-for="' + el.id + '"]');
+    if(c){ c.textContent = el.value.length + '/' + max; c.classList.toggle('over', el.value.length >= max); }
+  });
 }
 
 /* ── 入力チェック ── */
 function deliv(){
   return {
-    date: $('f-date').value, time: $('f-time').value,
-    name: $('f-name').value.trim(), kana: $('f-kana').value.trim(),
-    zip: $('f-zip').value.trim(), addr: $('f-addr').value.trim(),
-    tel: $('f-tel').value.trim(), memo: $('f-memo').value.trim()
+    date: $('f-date').value,
+    time: clean($('f-time').value, 20),
+    name: clean($('f-name').value, LIMIT.name),
+    kana: clean($('f-kana').value, LIMIT.kana),
+    zip:  normZip($('f-zip').value),
+    addr: clean($('f-addr').value, LIMIT.addr),
+    tel:  normTel($('f-tel').value),
+    memo: clean($('f-memo').value, LIMIT.memo)
   };
+}
+function fail(el, msg){
+  el.classList.add('err');
+  el.scrollIntoView({block:'center', behavior:'smooth'});
+  if(el.focus) el.focus({preventScroll:true});
+  if(msg) alert(msg);
+  return null;
 }
 function validate(){
   const d = deliv();
-  const need = state.mode === '一括発送'
-    ? [['f-group', state.groupId], ['f-name', d.name]]
-    : [['f-date', d.date], ['f-name', d.name], ['f-addr', d.addr], ['f-tel', d.tel]];
-  let first = null;
-  need.forEach(([id, v]) => {
-    const el = $(id); el.classList.toggle('err', !v);
-    if(!v && !first) first = el;
-  });
-  if(!first && state.mode !== '一括発送' && d.date < CONFIG.EARLIEST_DELIVERY) first = $('f-date');
-  if(first){
-    first.classList.add('err');
-    first.scrollIntoView({block:'center', behavior:'smooth'});
-    first.focus({preventScroll:true});
+  const m = curRecv();
+  ['f-date','f-name','f-zip','f-addr','f-tel','f-group'].forEach(id => $(id).classList.remove('err'));
+  if(!m){ alert('受け取り方法を選んでください。'); return null; }
+  if(!d.name) return fail($('f-name'));
+  if(m.pickGroup && !state.groupId) return fail($('f-group'));
+  if(m.needDate){
+    if(!d.date) return fail($('f-date'));
+    if(d.date < CONFIG.EARLIEST_DELIVERY)
+      return fail($('f-date'), CONFIG.EARLIEST_DELIVERY.replace(/-/g,'/') + ' 以降の日付をご指定ください。');
+  }
+  if(m.needAddr){
+    if(d.zip.replace(/[^\d]/g,'').length !== 7) return fail($('f-zip'), '郵便番号は7桁で入力してください。');
+    if(!d.addr) return fail($('f-addr'));
+    if(d.tel.replace(/[^\d]/g,'').length < 10)
+      return fail($('f-tel'), '電話番号は10桁または11桁で入力してください。');
+  }
+  if(state.pays.length && !state.payId){
+    $('pay-sec').scrollIntoView({block:'center', behavior:'smooth'});
+    alert('お支払い方法を選んでください。');
     return null;
   }
   return d;
@@ -516,31 +759,44 @@ function validate(){
 function openSheet(){
   const d = validate(); if(!d) return;
   const t = totals();
+  const m = curRecv();
   const g = state.groups.filter(x => x.id === state.groupId)[0];
+  const pay = state.pays.filter(p => p.id === state.payId)[0];
+
   let rows = '';
   state.products.forEach(p => {
     const q = state.qty[p.id] || 0; if(!q) return;
     const {sum, sur} = lineTotal(p, q);
-    rows += `<div class="rcpt-row"><span>${esc(p.poName)}<span class="q">${q}${p.unit}${sur?' +10%':''}</span></span><span>${sum.toLocaleString('ja-JP')}</span></div>`;
+    rows += '<div class="rcpt-row"><span>' + esc(p.poName) +
+      '<span class="q">' + q + esc(p.unit) + (sur ? ' +10%' : '') + '</span></span><span>' +
+      sum.toLocaleString('ja-JP') + '</span></div>';
   });
   state.others.filter(o => o.name.trim()).forEach(o => {
-    rows += `<div class="rcpt-row"><span>${esc(o.name)}<span class="q">${esc(o.qty)}</span></span><span>店確認</span></div>`;
+    rows += '<div class="rcpt-row"><span>' + esc(clean(o.name, LIMIT.otherName)) +
+      '<span class="q">' + esc(clean(o.qty, LIMIT.otherQty)) + '</span></span><span>店確認</span></div>';
   });
-  $('rcpt').innerHTML = `
-    <h3>ご注文</h3>${rows}
-    <div class="rcpt-row"><span>送料${state.mode === '一括発送' ? '（まとめ発送）' : t.shipping === 0 ? '（無料）' : '（概算）'}</span><span>${t.shipping.toLocaleString('ja-JP')}</span></div>
-    <div class="rcpt-row total"><span>仮計算合計</span><span>${yen(t.total)}</span></div>
-    <h3>受け取り</h3>
-    <div class="rcpt-info">
-      ${state.mode === '一括発送' && g
-        ? `${esc(g.label)}（まとめ発送）<br>${esc(g.date).replace(/-/g,'/')} ${esc(g.time)}<br>${esc(g.name)} 様あて / ${esc(g.addr)}<br>注文者：${esc(d.name)}`
-        : `${d.date} ${d.time}<br>${esc(d.name)} 様 ${d.kana ? '（' + esc(d.kana) + '）' : ''}<br>${esc(d.zip)} ${esc(d.addr)}<br>${esc(d.tel)}`}
-      ${d.memo ? '<br>連絡事項：' + esc(d.memo) : ''}
-    </div>
-    <div class="caution">
-      表示は仮計算です。値上がり・欠品・「リストにない品」の金額により、確定金額は変わります。<br>
-      チルド便のため、発送から7日が賞味期限です。ブロックのままお届けします。
-    </div>`;
+
+  const where = (m.pickGroup && g)
+    ? esc(g.label) + '<br>' + esc(String(g.date).replace(/-/g,'/')) + ' ' + esc(g.time) +
+      '<br>' + esc(g.name) + ' 様あて / ' + esc(g.addr) + '<br>注文者：' + esc(d.name)
+    : (m.needDate ? esc(d.date.replace(/-/g,'/')) + ' ' + esc(d.time) + '<br>' : '') +
+      esc(d.name) + ' 様 ' + (d.kana ? '（' + esc(d.kana) + '）' : '') +
+      (m.needAddr ? '<br>' + esc(d.zip) + ' ' + esc(d.addr) + '<br>' + esc(d.tel) : '');
+
+  $('rcpt').innerHTML =
+    '<h3>ご注文</h3>' + rows +
+    (t.weight ? '<div class="rcpt-row"><span style="color:#918e96">お肉の合計重量</span><span>' + fmtW(t.weight) + '</span></div>' : '') +
+    '<div class="rcpt-row"><span>送料' + (!m.shipping ? '（かかりません）' : t.shipping === 0 ? '（無料）' : '（概算）') +
+      '</span><span>' + t.shipping.toLocaleString('ja-JP') + '</span></div>' +
+    '<div class="rcpt-row total"><span>仮計算合計</span><span>' + yen(t.total) + '</span></div>' +
+    '<h3>' + esc(m.label) + '</h3><div class="rcpt-info">' + where +
+      (d.memo ? '<br>連絡事項：' + esc(d.memo) : '') + '</div>' +
+    (pay ? '<h3>お支払い</h3><div class="rcpt-info">' + esc(pay.label) + '<br>' +
+      '<span style="font-size:12px;color:#918e96">確定金額のご案内時に、お支払い先をLINEでお送りします。</span></div>' : '') +
+    '<div class="caution">表示は仮計算です。値上がり・欠品・「リストにない品」の金額により、確定金額は変わります。<br>' +
+      'チルド便のため、発送から7日が賞味期限です。ブロックのままお届けします。</div>';
+
+  $('pass-block').hidden = !state.needPass;
   $('sheet').classList.add('show');
   window.scrollTo(0, 0);
 }
@@ -548,26 +804,42 @@ function openSheet(){
 /* ── 送信 ── */
 async function send(){
   if(state.sending) return;
+  if(!state.online){
+    $('send-err').textContent = 'サーバーに接続できていないため送信できません。幹事に連絡してください。';
+    $('send-err').hidden = false;
+    return;
+  }
   state.sending = true;
   $('btn-send').disabled = true;
   $('btn-send').textContent = '送信中…';
   $('send-err').hidden = true;
 
   const t = totals();
+  const items = [];
+  state.products.forEach(p => {
+    const q = state.qty[p.id] || 0; if(!q) return;
+    const {sum, sur} = lineTotal(p, q);
+    items.push({id:p.id, poName:p.poName, unit:p.unit, qty:q, sum:sum, sur:sur});
+  });
+
   const payload = {
+    action: 'order',
     idToken: state.idToken,
     userId: state.profile ? state.profile.userId : '',
     displayName: state.profile ? state.profile.displayName : '',
-    shipMode: state.mode,
+    recvId: state.recvId,
     groupId: state.groupId,
-    items: state.products.filter(p => state.qty[p.id]).map(p => ({id:p.id, qty:state.qty[p.id]})),
-    others: state.others.filter(o => o.name.trim()).map(o => ({name:o.name.trim(), qty:o.qty.trim()})),
-    delivery: deliv(),
-    clientTotal: t.total
+    payId: state.payId,
+    passcode: state.needPass ? clean($('f-pass').value, 40) : '',
+    items: items,
+    others: state.others
+      .map(o => ({name: clean(o.name, LIMIT.otherName), qty: clean(o.qty, LIMIT.otherQty)}))
+      .filter(o => o.name).slice(0, LIMIT.otherRows),
+    weight: t.weight, goods: t.goods, shipping: t.shipping, total: t.total,
+    delivery: deliv()
   };
 
   try{
-    if(!CONFIG.GAS_URL) throw new Error('preview');
     const res = await fetch(CONFIG.GAS_URL, {
       method:'POST',
       headers:{'Content-Type':'text/plain;charset=utf-8'},   // ← プリフライト回避のため text/plain
@@ -575,78 +847,163 @@ async function send(){
     });
     const data = await res.json();
     if(!data.ok) throw new Error(data.error || '保存に失敗しました');
-    finish(data.total);
+    $('done-amt').textContent = yen(data.total);
+    $('done-msg').textContent = data.notified
+      ? '注文控えをLINEのトークに送りました。'
+      : '注文を保存しました。（LINE未連携のため控えは届きません）';
+    $('sheet').classList.remove('show');
+    $('done').classList.add('show');
   }catch(err){
-    if(err.message === 'preview'){ finish(t.total, true); return; }
-    $('send-err').textContent = '送信できませんでした。電波の良い場所でもう一度お試しください。（' + err.message + '）';
+    $('send-err').textContent = String(err.message || err);
     $('send-err').hidden = false;
     $('btn-send').disabled = false;
     $('btn-send').textContent = 'この内容で注文する';
     state.sending = false;
   }
 }
-function finish(total, preview){
-  $('done-amt').textContent = yen(total);
-  if(preview) $('done-msg').textContent = 'プレビュー表示です（まだ送信されていません）。';
-  $('sheet').classList.remove('show');
-  $('done').classList.add('show');
-}
 
 /* ── 起動 ── */
 async function init(){
   $('f-date').min = CONFIG.EARLIEST_DELIVERY;
+  $('f-date').value = CONFIG.EARLIEST_DELIVERY;
   $('date-hint').textContent = CONFIG.EARLIEST_DELIVERY.replace(/-/g,'/') + ' 以降でご指定ください。';
-
   state.products = FALLBACK_PRODUCTS;
-  if(CONFIG.GAS_URL){
+  state.recvAll  = FALLBACK_RECV;
+  state.pays     = FALLBACK_PAY;
+
+  const urlOk = /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(CONFIG.GAS_URL);
+  if(!urlOk){
+    diag('bad', '設定が未完了です',
+      'index.html の <code>GAS_URL</code> に、GASウェブアプリの <code>/exec</code> URLを入れてください。' +
+      '<br>このままでは注文がスプレッドシートに保存されません。');
+  }else{
     try{
       const d = await (await fetch(CONFIG.GAS_URL)).json();
-      if(d.ok && d.products && d.products.length) state.products = d.products;
+      if(!d.ok) throw new Error('サーバーがエラーを返しました');
+      state.online = true;
+      if(d.products && d.products.length) state.products = d.products;
       if(d.groups) state.groups = d.groups;
+      if(d.receiveMethods && d.receiveMethods.length) state.recvAll = d.receiveMethods;
+      if(d.payments) state.pays = d.payments;
       if(d.config){
         CONFIG.SHIPPING_FEE = d.config.shippingFee || CONFIG.SHIPPING_FEE;
         CONFIG.FREE_SHIPPING_MIN = d.config.freeShippingMin || CONFIG.FREE_SHIPPING_MIN;
+        state.needPass = !!d.config.passcodeRequired;
         if(d.config.earliestDate){
           CONFIG.EARLIEST_DELIVERY = d.config.earliestDate;
           $('f-date').min = d.config.earliestDate;
+          $('f-date').value = d.config.earliestDate;
           $('date-hint').textContent = d.config.earliestDate.replace(/-/g,'/') + ' 以降でご指定ください。';
         }
       }
-    }catch(e){ /* 予備リストで続行 */ }
+    }catch(e){
+      diag('bad', 'サーバーに接続できません',
+        'GASの「アクセスできるユーザー」が<b style="display:inline">全員</b>になっているか、' +
+        'コード変更後に再デプロイしたかをご確認ください。<br>このままでは注文が保存されません。');
+    }
   }
 
   const sel = $('f-group');
   if(state.groups.length){
     sel.innerHTML = '<option value="">選んでください</option>' +
-      state.groups.map(g => `<option value="${esc(g.id)}">${esc(g.label)}（${esc(g.date).replace(/-/g,'/')} ${esc(g.time)}）</option>`).join('');
+      state.groups.map(g => '<option value="' + esc(g.id) + '">' + esc(g.label) +
+        '（' + esc(String(g.date).replace(/-/g,'/')) + ' ' + esc(g.time) + '）</option>').join('');
   }else{
-    $('seg').querySelector('[data-mode="一括発送"]').disabled = true;
+    state.recvAll = state.recvAll.filter(m => !m.pickGroup);
     sel.innerHTML = '<option value="">まとめ発送の受付はありません</option>';
   }
 
   buildMenu();
+  buildRecv();
+  buildPay();
   render();
 
+  /* --- LINE連携 --- */
+  const liffOk = /^\d{10}-\w{8}$/.test(CONFIG.LIFF_ID);
+  if(!liffOk){
+    if(state.online) diag('warn', 'LINE未連携',
+      'index.html の <code>LIFF_ID</code> が未設定です。注文の保存はできますが、控えのLINEは届きません。');
+    return;
+  }
   try{
     await liff.init({liffId: CONFIG.LIFF_ID});
-    if(!liff.isLoggedIn()){ liff.login(); return; }
+    if(!liff.isLoggedIn()){ liff.login({redirectUri: location.href}); return; }
     state.profile = await liff.getProfile();
     state.idToken = liff.getIDToken() || '';
-    if(!$('f-name').value) $('f-name').value = state.profile.displayName || '';
+    if(!$('f-name').value) $('f-name').value = clean(state.profile.displayName, LIMIT.name);
+    await lookup();
   }catch(e){
-    $('banner').hidden = false;
-    $('banner').textContent = 'LINEの外で開いています（動作確認モード）';
+    if(state.online) diag('warn', 'LINEの外で開いています',
+      '注文の保存はできますが、控えのLINEや過去の注文の読み出しはできません。' +
+      '公式LINEのメニューから開き直すと使えるようになります。');
   }
 }
 
-$('seg').addEventListener('click', e => {
-  const b = e.target.closest('button[data-mode]');
-  if(b && !b.disabled) setMode(b.dataset.mode);
+/* 前回の入力・タグ・履歴を読み出して画面に反映 */
+async function lookup(){
+  if(!state.online) return;
+  try{
+    const res = await fetch(CONFIG.GAS_URL, {
+      method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({action:'lookup', idToken: state.idToken,
+                            userId: state.profile ? state.profile.userId : ''})
+    });
+    const d = await res.json();
+    if(!d.ok) return;
+
+    state.tags = d.tags || [];
+    state.history = d.history || [];
+    buildRecv();
+
+    if(d.found && d.profile){
+      fillProfile(d.profile);
+      if(d.profile.pay && state.pays.filter(p => p.id === d.profile.pay).length) setPay(d.profile.pay);
+      updateCounts();
+      const n = state.history.length;
+      $('welcome-txt').innerHTML = 'おかえりなさい、' + esc(d.profile.name || '') + ' さん<br>' +
+        '<small>前回の内容を入力しておきました' + (n ? '（過去の注文 ' + n + '件）' : '') + '</small>';
+      $('welcome').classList.add('show');
+    }else if(state.history.length){
+      $('welcome-txt').innerHTML = '過去のご注文が' + state.history.length + '件あります<br>' +
+        '<small>同じ内容で注文できます</small>';
+      $('welcome').classList.add('show');
+    }
+    buildHistory();
+  }catch(e){ /* 読み出せなくても注文はできます */ }
+}
+
+/* ── イベント ── */
+$('seg-recv').addEventListener('click', e => {
+  const b = e.target.closest('button[data-recv]');
+  if(b){ state.recvId = b.dataset.recv; applyRecv(); }
+});
+$('seg-pay').addEventListener('click', e => {
+  const b = e.target.closest('button[data-pay]');
+  if(b) setPay(b.dataset.pay);
 });
 $('f-group').addEventListener('change', e => {
   state.groupId = e.target.value;
   e.target.classList.toggle('err', !state.groupId);
   renderGroupCard();
+});
+$('f-zip').addEventListener('input', e => { e.target.value = normZip(e.target.value); });
+$('f-tel').addEventListener('input', e => { e.target.value = e.target.value.replace(/[^\d\-]/g, '').slice(0, 15); });
+$('f-tel').addEventListener('blur',  e => { e.target.value = normTel(e.target.value); });
+
+document.querySelectorAll('[data-max]').forEach(el => {
+  el.addEventListener('input', () => {
+    const max = Number(el.dataset.max);
+    if(el.value.length > max) el.value = el.value.slice(0, max);
+    updateCounts();
+  });
+});
+updateCounts();
+
+$('btn-hist').addEventListener('click', () => { buildHistory(); $('hsheet').classList.add('show'); window.scrollTo(0,0); });
+$('btn-hclose').addEventListener('click', () => $('hsheet').classList.remove('show'));
+$('hist').addEventListener('click', e => {
+  const b = e.target.closest('button[data-reorder]');
+  if(b) reorder(Number(b.dataset.reorder));
 });
 $('btn-confirm').addEventListener('click', openSheet);
 $('btn-back').addEventListener('click', () => $('sheet').classList.remove('show'));
