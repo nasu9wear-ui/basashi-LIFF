@@ -197,7 +197,7 @@ textarea{resize:vertical}
       <li>ブロックでのお渡しです。カットは各自でお願いします。</li>
       <li>チルド商品です。発送から7日が賞味期限です。</li>
       <li>100g未満は10%の手数料がかかります（タテガミは50g単位）。</li>
-      <li>個別発送は送料が約1,200円、16,500円以上で無料です。</li>
+      <li>個別発送は送料が約1,500円、16,500円以上で無料です。</li>
       <li>特上霜降り『幻』は入荷が読めないため、日時指定ができません。</li>
       <li>不明点は公式LINEにコメントしてください。</li>
     </ul>
@@ -332,6 +332,7 @@ textarea{resize:vertical}
     <p>仮計算合計</p>
     <p style="margin-top:14px;font-size:12.5px">確定金額とお支払いのご案内は、金額の確定後に公式LINEでお送りします。</p>
     <button class="cta" id="btn-close">閉じる</button>
+    <p style="margin-top:10px;font-size:11.5px;color:#918e96">閉じない場合は右上の×で閉じてください。</p>
   </div>
 </div>
 
@@ -343,24 +344,24 @@ const CONFIG = {
   LIFF_ID: '2010851149-ppI59211',   // LINE Developers で発行した LIFF ID
   GAS_URL: 'https://script.google.com/macros/s/AKfycby56G1Hiu8iMeChNTvokji4dJr6dGM94z0Xzoshs7QDhrzMEhshX3LU_8fx88JZyDsD/exec',                       // GAS ウェブアプリの /exec URL（.../exec で終わる）
   EARLIEST_DELIVERY: '2026-08-01',
-  SHIPPING_FEE: 1200,
+  SHIPPING_FEE: 1500,
   FREE_SHIPPING_MIN: 16500,
   SOY_PER_GRAM: 700
 };
 
-const LIMIT = { name:30, kana:30, addr:100, memo:200, otherName:40, otherQty:20, otherRows:10 };
+const LIMIT = { name:30, kana:30, addr:100, memo:200 };
 
 /** Code.gs の VERSION と一致している必要があります（再デプロイ忘れの検出用） */
-const EXPECT_VERSION = '2026-08-15';
+const EXPECT_VERSION = '2026-08-15e';
 
 /* GAS に接続できないときの予備リスト（正はスプレッドシートの各マスタ） */
 const FALLBACK_PRODUCTS = [
-  {id:'aka_chateau',cat:'赤身馬刺し',name:'赤身シャトーブリアン（ヒレ）',poName:'赤身シャトーブリアン',note:'いちばん柔らかい赤身',unit:'g',price:1500,per:100,step:50,min:50,sur:true},
+  {id:'aka_chateau',cat:'赤身馬刺し',name:'赤身特選馬刺し（ヒレ・カイノミ）',poName:'赤身特選馬刺し',note:'柔らかい',unit:'g',price:1500,per:100,step:50,min:50,sur:true},
   {id:'aka_tokujo',cat:'赤身馬刺し',name:'赤身特上馬刺し（ロース）',poName:'赤身特上馬刺し',note:'きめ細かいロース',unit:'g',price:1380,per:100,step:50,min:50,sur:true},
   {id:'aka_jo',cat:'赤身馬刺し',name:'赤身上馬刺し（上モモ・バラ）',poName:'赤身上馬刺し',note:'定番の上ランク',unit:'g',price:1200,per:100,step:50,min:50,sur:true},
-  {id:'aka_std',cat:'赤身馬刺し',name:'赤身馬刺し（モモ・肩）',poName:'赤身馬刺し',note:'あっさり。量を食べたい方に',unit:'g',price:1000,per:100,step:50,min:50,sur:true},
-  {id:'aka_kori',cat:'赤身馬刺し',name:'コリコリ赤身（脇・首）',poName:'コリコリ赤身',note:'歯ごたえのある部位',unit:'g',price:900,per:100,step:50,min:50,sur:true},
-  {id:'aka_young',cat:'赤身馬刺し',name:'ヤング赤身（ヤング・ツト）',poName:'ヤング赤身',note:'やわらかい若馬の赤身',unit:'g',price:700,per:100,step:50,min:50,sur:true},
+  {id:'aka_std',cat:'赤身馬刺し',name:'赤身馬刺し（モモ・肩）',poName:'赤身馬刺し',note:'モチモチ食感',unit:'g',price:1000,per:100,step:50,min:50,sur:true},
+  {id:'aka_kori',cat:'赤身馬刺し',name:'コリコリ赤身（脇・首）',poName:'コリコリ赤身',note:'肉質が固い',unit:'g',price:900,per:100,step:50,min:50,sur:true},
+  {id:'aka_young',cat:'赤身馬刺し',name:'ヤング赤身（ヤング・ツト）',poName:'ヤング赤身',note:'太い筋があり口に残ります',unit:'g',price:700,per:100,step:50,min:50,sur:true},
   {id:'aka_shio',cat:'赤身馬刺し',name:'赤身塩焼き用',poName:'赤身塩焼き用',note:'焼いて食べる用',unit:'g',price:398,per:100,step:50,min:50,sur:true},
   {id:'heart',cat:'赤身馬刺し',name:'ハート',poName:'ハート',note:'コリッとした食感',unit:'g',price:980,per:100,step:50,min:50,sur:true},
   {id:'liver',cat:'赤身馬刺し',name:'レバー',poName:'レバー',note:'濃厚。鮮度重視の一品',unit:'g',price:3000,per:100,step:50,min:50,sur:true},
@@ -368,25 +369,29 @@ const FALLBACK_PRODUCTS = [
   {id:'uma_tataki',cat:'赤身馬刺し',name:'馬タタキ',poName:'馬タタキ',note:'表面を炙った一品',unit:'g',price:1200,per:100,step:50,min:50,sur:true},
   {id:'tori_tataki',cat:'赤身馬刺し',name:'鶏タタキ',poName:'鶏タタキ',note:'鶏の炙りタタキ',unit:'g',price:400,per:100,step:50,min:50,sur:true},
 
-  {id:'shi_maboroshi',cat:'霜降り馬刺し',name:'特上霜降り『幻』（三枚バラ幻）',poName:'特上霜降り幻',note:'サシ有り。入荷未定・日時指定不可',unit:'g',price:4500,per:100,step:50,min:50,sur:true},
-  {id:'shi_kiwami',cat:'霜降り馬刺し',name:'特上霜降り『極』（三枚バラ極）',poName:'特上霜降り極',note:'サシ有り',unit:'g',price:3800,per:100,step:50,min:50,sur:true},
-  {id:'shi_sakura',cat:'霜降り馬刺し',name:'上霜降り『桜』（オビ2・カイノミ）',poName:'上霜降り桜',note:'サシ有り',unit:'g',price:3500,per:100,step:50,min:50,sur:true},
+  {id:'shi_maboroshi',cat:'霜降り馬刺し',name:'特上霜降り『幻』（三枚バラ）',poName:'特上霜降り幻',note:'サシ有り。入荷未定・日時指定不可',unit:'g',price:4500,per:100,step:50,min:50,sur:true},
+  {id:'shi_kiwami',cat:'霜降り馬刺し',name:'特上霜降り『極』（三枚バラ・オビ1）',poName:'特上霜降り極',note:'サシ有り',unit:'g',price:3800,per:100,step:50,min:50,sur:true},
+  {id:'shi_sakura',cat:'霜降り馬刺し',name:'霜降り『特上』（オビ2・カイノミ）',poName:'霜降り特上',note:'サシ有り',unit:'g',price:3500,per:100,step:50,min:50,sur:true},
   {id:'shi_jo',cat:'霜降り馬刺し',name:'上霜降り（肩ロース・尻口・イチボ）',poName:'上霜降り',note:'サシ有り',unit:'g',price:2800,per:100,step:50,min:50,sur:true},
-  {id:'shi_rib',cat:'霜降り馬刺し',name:'霜降り（リブロース・ラム・ヒレ）',poName:'霜降り（リブロース・ラム・ヒレ）',note:'サシ弱い',unit:'g',price:2300,per:100,step:50,min:50,sur:true},
-  {id:'shi_waki',cat:'霜降り馬刺し',name:'霜降り（脇・肩）',poName:'霜降り（脇・肩）',note:'サシ有り',unit:'g',price:2000,per:100,step:50,min:50,sur:true},
-  {id:'shi_kata',cat:'霜降り馬刺し',name:'霜降り（肩・モモ）柔らかめ',poName:'霜降り（肩・モモ）',note:'サシ薄い',unit:'g',price:1700,per:100,step:50,min:50,sur:true},
-  {id:'shi_aka',cat:'霜降り馬刺し',name:'霜降り赤身（肩・モモ）硬め',poName:'霜降り赤身（肩・モモ）',note:'赤身寄り',unit:'g',price:1400,per:100,step:50,min:50,sur:true},
-  {id:'shi_kori',cat:'霜降り馬刺し',name:'コリコリ馬刺し（ヤング）',poName:'コリコリ馬刺し',note:'サシ粗い',unit:'g',price:1000,per:100,step:50,min:50,sur:true},
-  {id:'futaego',cat:'霜降り馬刺し',name:'フタエゴ',poName:'フタエゴ',note:'固め。三層の食感',unit:'g',price:1500,per:100,step:50,min:50,sur:true},
+  {id:'shi_rib',cat:'霜降り馬刺し',name:'霜降り『桜』（リブロース・ラム・ヒレ）',poName:'霜降り桜',note:'サシ弱い',unit:'g',price:2500,per:100,step:50,min:50,sur:true},
+  {id:'shi_waki',cat:'霜降り馬刺し',name:'霜降り（脇・肩）',poName:'霜降り（脇・肩）',note:'サシ有り',unit:'g',price:2300,per:100,step:50,min:50,sur:true},
+  {id:'shi_kata',cat:'霜降り馬刺し',name:'桜上赤身（肩・モモ）柔らかめ',poName:'桜上赤身',note:'サシ薄い',unit:'g',price:2000,per:100,step:50,min:50,sur:true},
+  {id:'shi_aka',cat:'霜降り馬刺し',name:'桜赤身（肩・モモ）硬め',poName:'桜赤身',note:'赤身寄り',unit:'g',price:1500,per:100,step:50,min:50,sur:true},
+  {id:'shi_kori',cat:'霜降り馬刺し',name:'コリコリ馬刺し（ヤング）',poName:'コリコリ馬刺し',note:'サシ粗い',unit:'g',price:1100,per:100,step:50,min:50,sur:true},
+  {id:'futaego',cat:'霜降り馬刺し',name:'フタエゴ',poName:'フタエゴ',note:'固め。三層の食感',unit:'g',price:1600,per:100,step:50,min:50,sur:true},
   {id:'usuego',cat:'霜降り馬刺し',name:'薄エゴ',poName:'薄エゴ',note:'固め',unit:'g',price:1000,per:100,step:50,min:50,sur:true},
-  {id:'barahimo_s',cat:'霜降り馬刺し',name:'上バラひも（刺身用）',poName:'上バラひも',note:'筋あり歯ごたえあり',unit:'g',price:1500,per:100,step:50,min:50,sur:true},
+  {id:'barahimo_s',cat:'霜降り馬刺し',name:'上バラひも（刺身用）',poName:'上バラひも',note:'筋あり歯ごたえあり',unit:'g',price:1600,per:100,step:50,min:50,sur:true},
   {id:'barahimo_y',cat:'霜降り馬刺し',name:'バラヒモ（焼き用）',poName:'バラヒモ焼き用',note:'焼いて食べる用',unit:'g',price:1200,per:100,step:50,min:50,sur:true},
 
-  {id:'suji_skin',cat:'その他',name:'スキンナースジ（1kg）',poName:'スキンナースジ1kg',note:'煮込み用',unit:'袋',price:800,per:1,step:1,min:1,sur:false},
-  {id:'suji_tebiki',cat:'その他',name:'手引きスジ（500g）',poName:'手引きスジ500g',note:'煮込み用',unit:'袋',price:700,per:1,step:1,min:1,sur:false},
-  {id:'kosagi',cat:'その他',name:'こさぎ（250g）',poName:'こさぎ250g',note:'',unit:'袋',price:800,per:1,step:1,min:1,sur:false},
+  {id:'suji_skin',cat:'その他',name:'スキンナースジ（1kg）',poName:'スキンナースジ1kg',note:'煮込み用。1kg単位',unit:'袋',price:800,per:1,step:1,min:1,sur:false},
+  {id:'suji_tebiki',cat:'その他',name:'手引きスジ（500g）',poName:'手引きスジ500g',note:'煮込み用。500g単位',unit:'袋',price:700,per:1,step:1,min:1,sur:false},
+  {id:'natto',cat:'その他',name:'桜納豆',poName:'桜納豆',note:'',unit:'個',price:750,per:1,step:1,min:1,sur:false},
+  {id:'renkon_cold',cat:'その他',name:'辛子蓮根（冷蔵）',poName:'辛子蓮根(冷蔵)',note:'',unit:'個',price:900,per:1,step:1,min:1,sur:false},
+  {id:'renkon_frozen',cat:'その他',name:'辛子蓮根（冷凍）',poName:'辛子蓮根(冷凍)',note:'',unit:'個',price:950,per:1,step:1,min:1,sur:false},
 
-  {id:'soy',cat:'醤油',name:'九州の甘い醤油 150ml',poName:'醤油',note:'馬刺しに合う甘口',unit:'本',price:324,per:1,step:1,min:1,sur:false}
+  {id:'soy_small',cat:'醤油',name:'オリジナル醤油（小袋 20ml）',poName:'醤油小袋',note:'使い切りの小袋',unit:'本',price:50,per:1,step:1,min:1,sur:false},
+  {id:'soy',cat:'醤油',name:'オリジナル醤油（150ml）',poName:'醤油',note:'馬刺しに合う甘口。目安700g/1本',unit:'本',price:324,per:1,step:1,min:1,sur:false},
+  {id:'soy_1l',cat:'醤油',name:'オリジナル醤油（1L）',poName:'醤油1L',note:'たっぷり使う方に',unit:'本',price:1198,per:1,step:1,min:1,sur:false}
 ];
 const FALLBACK_RECV = [
   {id:'ship', label:'個別発送', note:'自宅などへ直送', tag:'', shipping:true,  needAddr:true,  needDate:true,  pickGroup:false, guide:''},
@@ -401,7 +406,7 @@ const FALLBACK_PAY = [
 ];
 
 const state = {
-  products:[], groups:[], recvAll:[], recv:[], pays:[], qty:{}, others:[{name:'',qty:''}],
+  products:[], groups:[], recvAll:[], recv:[], pays:[], qty:{},
   recvId:'', groupId:'', payId:'', tags:[], history:[], profile:null, idToken:'',
   online:false, needPass:false, sending:false
 };
@@ -446,11 +451,10 @@ function totals(){
     goods += lineTotal(p, q).sum;
     if(p.unit === 'g') meat += q;
   });
-  const hasOther = state.others.some(o => o.name.trim());
   const m = curRecv();
   const shipping = (!m || !m.shipping || goods === 0) ? 0
     : (goods >= CONFIG.FREE_SHIPPING_MIN ? 0 : CONFIG.SHIPPING_FEE);
-  return {goods, weight: meat, shipping, total: goods + shipping, hasOther};
+  return {goods, weight: meat, shipping, total: goods + shipping};
 }
 const unitLabel = p => p.unit === 'g' ? p.per + 'g' : p.unit;
 function poLabel(p, q){
@@ -494,50 +498,13 @@ function buildMenu(){
     html += '</details>';
   });
 
-  html += '<details class="sec"><summary class="sec-hd"><h2>リストにない品</h2>' +
-    '<span class="pick" id="pick-other" hidden>0</span>' +
-    '<span class="kome">金額は店確認</span><span class="chev">▼</span></summary>' +
-    '<p class="sec-note">価格表にない品や特別な注文はこちらに。品名と数量をご記入ください（最大' + LIMIT.otherRows + '件）。</p>' +
-    '<div class="free-rows" id="free-rows"></div>' +
-    '<button type="button" class="addbtn" id="btn-add">＋ 品目を追加する</button></details>';
-
   $('menu').innerHTML = html;
   state.cats = cats;
 
   $('menu').addEventListener('click', e => {
     const b = e.target.closest('button[data-id]');
     if(b){ e.preventDefault(); return bump(b.dataset.id, Number(b.dataset.d)); }
-    if(e.target.id === 'btn-add'){
-      if(state.others.length < LIMIT.otherRows){ state.others.push({name:'',qty:''}); renderFree(); }
-      return;
-    }
-    const rm = e.target.closest('button[data-rm]');
-    if(rm){
-      state.others.splice(Number(rm.dataset.rm), 1);
-      if(!state.others.length) state.others.push({name:'',qty:''});
-      renderFree(); render();
-    }
   });
-  $('menu').addEventListener('input', e => {
-    const f = e.target.closest('[data-fi]');
-    if(!f) return;
-    const max = f.dataset.fk === 'name' ? LIMIT.otherName : LIMIT.otherQty;
-    if(f.value.length > max) f.value = f.value.slice(0, max);
-    state.others[Number(f.dataset.fi)][f.dataset.fk] = f.value;
-    render();
-  });
-  renderFree();
-}
-
-function renderFree(){
-  $('free-rows').innerHTML = state.others.map((o,i) =>
-    '<div class="free-row">' +
-    '<input type="text" data-fi="' + i + '" data-fk="name" maxlength="' + LIMIT.otherName +
-      '" value="' + esc(o.name) + '" placeholder="品名（例：ハート）">' +
-    '<input type="text" class="q" data-fi="' + i + '" data-fk="qty" maxlength="' + LIMIT.otherQty +
-      '" value="' + esc(o.qty) + '" placeholder="100g">' +
-    '<button type="button" data-rm="' + i + '" aria-label="この行を削除">×</button></div>').join('');
-  $('btn-add').disabled = state.others.length >= LIMIT.otherRows;
 }
 
 function bump(id, dir){
@@ -571,10 +538,6 @@ function render(){
     const b = $('pick-' + ci);
     if(b){ b.hidden = n === 0; b.textContent = n; }
   });
-  const on = state.others.filter(o => o.name.trim()).length;
-  $('pick-other').hidden = on === 0;
-  $('pick-other').textContent = on;
-
   const t = totals();
   const soyHint = $('soy-hint');
   if(soyHint && t.weight){
@@ -597,7 +560,7 @@ function render(){
     : (m && !m.shipping) ? '送料はかかりません'
     : t.shipping === 0 ? '送料無料です'
     : '送料無料まであと <b>' + (CONFIG.FREE_SHIPPING_MIN - t.goods).toLocaleString('ja-JP') + '</b> 円';
-  $('btn-confirm').disabled = !(t.goods > 0 || t.hasOther);
+  $('btn-confirm').disabled = !(t.goods > 0);
 }
 
 /* ── 受取方法（タグで出し分け） ── */
@@ -621,8 +584,10 @@ function applyRecv(){
   $('group-block').hidden = !(m && m.pickGroup);
   $('date-block').hidden  = !(m && m.needDate);
   $('addr-block').hidden  = !(m && m.needAddr);
-  $('recv-guide').hidden  = !(m && m.guide);
-  if(m && m.guide) $('recv-guide').textContent = m.guide;
+  /* 日付を指定しない受取方法では、案内文を日付のかわりに表示します */
+  const showGuide = !!(m && m.guide && !m.pickGroup);
+  $('recv-guide').hidden = !showGuide;
+  if(showGuide) $('recv-guide').textContent = m.guide;
   renderGroupCard();
   render();
 }
@@ -680,17 +645,9 @@ function reorder(i){
     const p = state.products.filter(x => x.id === l.id)[0];
     if(p) state.qty[p.id] = Number(l.qty) || 0; else missing++;
   });
-  state.others = [{name:'',qty:''}];
-  if(o.other){
-    const rows = String(o.other).split('\n').filter(String).slice(0, LIMIT.otherRows).map(s => {
-      const m = s.match(/^(.*?)\s+(\S+)$/);
-      return m ? {name:m[1], qty:m[2]} : {name:s, qty:''};
-    });
-    if(rows.length) state.others = rows;
-  }
   fillProfile({name:o.name, kana:o.kana, zip:o.zip, addr:o.addr, tel:o.tel});
   if(o.memo) $('f-memo').value = o.memo;
-  renderFree(); render(); updateCounts();
+  render(); updateCounts();
   $('hsheet').classList.remove('show');
   window.scrollTo({top:0, behavior:'smooth'});
   if(missing) alert('現在お取り扱いのない商品が' + missing + '件あったため、そのぶんは除いています。');
@@ -714,9 +671,11 @@ function updateCounts(){
 
 /* ── 入力チェック ── */
 function deliv(){
+  const m = curRecv();
+  const useDate = !!(m && m.needDate);
   return {
-    date: $('f-date').value,
-    time: clean($('f-time').value, 20),
+    date: useDate ? $('f-date').value : '',
+    time: useDate ? clean($('f-time').value, 20) : '',
     name: clean($('f-name').value, LIMIT.name),
     kana: clean($('f-kana').value, LIMIT.kana),
     zip:  normZip($('f-zip').value),
@@ -774,15 +733,11 @@ function openSheet(){
       '<span class="q">' + q + esc(p.unit) + (sur ? ' +10%' : '') + '</span></span><span>' +
       sum.toLocaleString('ja-JP') + '</span></div>';
   });
-  state.others.filter(o => o.name.trim()).forEach(o => {
-    rows += '<div class="rcpt-row"><span>' + esc(clean(o.name, LIMIT.otherName)) +
-      '<span class="q">' + esc(clean(o.qty, LIMIT.otherQty)) + '</span></span><span>店確認</span></div>';
-  });
-
   const where = (m.pickGroup && g)
     ? esc(g.label) + '<br>' + esc(String(g.date).replace(/-/g,'/')) + ' ' + esc(g.time) +
       '<br>' + esc(g.name) + ' 様あて / ' + esc(g.addr) + '<br>注文者：' + esc(d.name)
-    : (m.needDate ? esc(d.date.replace(/-/g,'/')) + ' ' + esc(d.time) + '<br>' : '') +
+    : (m.needDate ? 'お届け希望日：' + esc(d.date.replace(/-/g,'/')) + '<br>時間帯：' + esc(d.time || '指定なし') + '<br>'
+                  : (m.guide ? esc(m.guide) + '<br>' : '')) +
       esc(d.name) + ' 様 ' + (d.kana ? '（' + esc(d.kana) + '）' : '') +
       (m.needAddr ? '<br>' + esc(d.zip) + ' ' + esc(d.addr) + '<br>' + esc(d.tel) : '');
 
@@ -796,7 +751,7 @@ function openSheet(){
       (d.memo ? '<br>連絡事項：' + esc(d.memo) : '') + '</div>' +
     (pay ? '<h3>お支払い</h3><div class="rcpt-info">' + esc(pay.label) + '<br>' +
       '<span style="font-size:12px;color:#918e96">確定金額のご案内時に、お支払い先をLINEでお送りします。</span></div>' : '') +
-    '<div class="caution">表示は仮計算です。値上がり・欠品・「リストにない品」の金額により、確定金額は変わります。<br>' +
+    '<div class="caution">表示は仮計算です。値上がりや欠品により、確定金額は変わることがあります。<br>' +
       'チルド便のため、発送から7日が賞味期限です。ブロックのままお届けします。</div>';
 
   $('pass-block').hidden = !state.needPass;
@@ -835,9 +790,6 @@ async function send(){
     payId: state.payId,
     passcode: state.needPass ? clean($('f-pass').value, 40) : '',
     items: items,
-    others: state.others
-      .map(o => ({name: clean(o.name, LIMIT.otherName), qty: clean(o.qty, LIMIT.otherQty)}))
-      .filter(o => o.name).slice(0, LIMIT.otherRows),
     weight: t.weight, goods: t.goods, shipping: t.shipping, total: t.total,
     delivery: deliv()
   };
@@ -850,17 +802,6 @@ async function send(){
       : '注文を保存しました。（LINE未連携のため控えは届きません）';
     $('sheet').classList.remove('show');
     $('done').classList.add('show');
-    /* 5秒後に自動で閉じます（すぐ閉じたい人は閉じるボタン） */
-    if(window.liff && liff.isInClient && liff.isInClient()){
-      let left = 5;
-      $('btn-close').textContent = '閉じる（' + left + '）';
-      const iv = setInterval(() => {
-        left--;
-        if(left <= 0){ clearInterval(iv); closeApp(); return; }
-        $('btn-close').textContent = '閉じる（' + left + '）';
-      }, 1000);
-      $('btn-close').addEventListener('click', () => clearInterval(iv), {once:true});
-    }
   }catch(err){
     $('send-err').style.whiteSpace = 'pre-line';
     $('send-err').textContent = String(err.message || err);
@@ -921,7 +862,8 @@ async function init(){
       '<br>このままでは注文がスプレッドシートに保存されません。');
   }else{
     try{
-      const r = await fetch(CONFIG.GAS_URL);
+      /* 末尾に時刻を付けて、古い内容がキャッシュから返らないようにします */
+      const r = await fetch(CONFIG.GAS_URL + '?t=' + Date.now(), {cache:'no-store'});
       const txt = await r.text();
       if(txt.trim().charAt(0) === '<') throw new Error('html');
       const d = JSON.parse(txt);
@@ -1064,25 +1006,16 @@ $('hist').addEventListener('click', e => {
 $('btn-confirm').addEventListener('click', openSheet);
 $('btn-back').addEventListener('click', () => $('sheet').classList.remove('show'));
 $('btn-send').addEventListener('click', send);
-/* 注文後は画面を閉じます。閉じられない環境（外部ブラウザ等）だけ案内を出します */
-function closeApp(){
+/* 閉じるボタン。LINE内なら閉じ、だめなら案内だけ出します */
+$('btn-close').addEventListener('click', () => {
   try{
-    if(window.liff && typeof liff.closeWindow === 'function'){
+    if(window.liff && liff.isInClient && liff.isInClient() && typeof liff.closeWindow === 'function'){
       liff.closeWindow();
-      /* closeWindow が効かない環境向けの保険 */
-      setTimeout(() => {
-        $('done-msg').textContent = 'この画面は閉じていただいて大丈夫です。';
-        $('btn-close').textContent = '閉じられない場合はタブを閉じてください';
-        $('btn-close').disabled = true;
-      }, 900);
-      return;
     }
-  }catch(e){ /* 下の案内へ */ }
-  $('done-msg').textContent = 'この画面は閉じていただいて大丈夫です。';
-  $('btn-close').textContent = '閉じられない場合はタブを閉じてください';
+  }catch(e){ /* 案内へ */ }
+  $('btn-close').textContent = '右上の×で閉じてください';
   $('btn-close').disabled = true;
-}
-$('btn-close').addEventListener('click', closeApp);
+});
 init();
 </script>
 </body>
