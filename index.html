@@ -352,7 +352,7 @@ const CONFIG = {
 const LIMIT = { name:30, kana:30, addr:100, memo:200 };
 
 /** Code.gs の VERSION と一致している必要があります（再デプロイ忘れの検出用） */
-const EXPECT_VERSION = '2026-08-15e';
+const EXPECT_VERSION = '2026-08-15h';
 
 /* GAS に接続できないときの予備リスト（正はスプレッドシートの各マスタ） */
 const FALLBACK_PRODUCTS = [
@@ -481,7 +481,7 @@ function buildMenu(){
       '<span class="pick" id="pick-' + ci + '" hidden>0</span>' +
       '<span class="kome">' + (cat === '醤油' ? '1本 150ml' : cat === 'その他' ? '袋単位' : '50g単位') + '</span>' +
       '<span class="chev">▼</span></summary>';
-    if(cat === '醤油') html += '<p class="sec-note" id="soy-hint"></p>';
+    if(cat === '醤油') html += '<p class="sec-note" id="soy-hint">目安は肉700gにつき1本です。</p>';
     state.products.filter(p => p.cat === cat).forEach(p => {
       html += '<div class="item" id="row-' + esc(p.id) + '">' +
         '<div><span class="item-name">' + esc(p.name) + '</span>' +
