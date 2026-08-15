@@ -350,6 +350,9 @@ const CONFIG = {
 
 const LIMIT = { name:30, kana:30, addr:100, memo:200, otherName:40, otherQty:20, otherRows:10 };
 
+/** Code.gs の VERSION と一致している必要があります（再デプロイ忘れの検出用） */
+const EXPECT_VERSION = '2026-08-12';
+
 /* GAS に接続できないときの予備リスト（正はスプレッドシートの各マスタ） */
 const FALLBACK_PRODUCTS = [
   {id:'aka_chateau',cat:'赤身馬刺し',name:'赤身シャトーブリアン（ヒレ）',poName:'赤身シャトーブリアン',note:'いちばん柔らかい赤身',unit:'g',price:1500,per:100,step:50,min:50,sur:true},
@@ -840,26 +843,66 @@ async function send(){
   };
 
   try{
-    const res = await fetch(CONFIG.GAS_URL, {
-      method:'POST',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},   // ← プリフライト回避のため text/plain
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    if(!data.ok) throw new Error(data.error || '保存に失敗しました');
+    const data = await postGas(payload);
     $('done-amt').textContent = yen(data.total);
     $('done-msg').textContent = data.notified
       ? '注文控えをLINEのトークに送りました。'
       : '注文を保存しました。（LINE未連携のため控えは届きません）';
     $('sheet').classList.remove('show');
     $('done').classList.add('show');
+    /* 5秒後に自動で閉じます（すぐ閉じたい人は閉じるボタン） */
+    if(window.liff && liff.isInClient && liff.isInClient()){
+      let left = 5;
+      $('btn-close').textContent = '閉じる（' + left + '）';
+      const iv = setInterval(() => {
+        left--;
+        if(left <= 0){ clearInterval(iv); closeApp(); return; }
+        $('btn-close').textContent = '閉じる（' + left + '）';
+      }, 1000);
+      $('btn-close').addEventListener('click', () => clearInterval(iv), {once:true});
+    }
   }catch(err){
+    $('send-err').style.whiteSpace = 'pre-line';
     $('send-err').textContent = String(err.message || err);
     $('send-err').hidden = false;
     $('btn-send').disabled = false;
     $('btn-send').textContent = 'この内容で注文する';
     state.sending = false;
   }
+}
+
+/** GASへの送信。失敗した理由を具体的に返します */
+async function postGas(payload){
+  let res;
+  try{
+    res = await fetch(CONFIG.GAS_URL, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},   // ← プリフライト回避のため text/plain
+      body: JSON.stringify(payload)
+    });
+  }catch(e){
+    throw new Error('サーバーに届きませんでした。\n' +
+      'GASのURLが違うか、デプロイが削除されている可能性があります。\n' +
+      '（幹事へ：デプロイのアクセス権が「全員」か確認してください）');
+  }
+
+  const text = await res.text();
+
+  /* ログイン画面やエラー画面が返るとHTMLになります＝公開設定の誤り */
+  if(text.trim().charAt(0) === '<'){
+    throw new Error('GASの公開設定が正しくありません。\n' +
+      '（幹事へ：デプロイの「アクセスできるユーザー」を「全員」にして、\n' +
+      '　バージョンを「新バージョン」にして再デプロイしてください）');
+  }
+
+  let data;
+  try{ data = JSON.parse(text); }
+  catch(e){
+    throw new Error('サーバーの応答を読み取れませんでした（HTTP ' + res.status + '）\n' +
+      text.slice(0, 120));
+  }
+  if(!data.ok) throw new Error(data.error || '保存に失敗しました');
+  return data;
 }
 
 /* ── 起動 ── */
@@ -878,9 +921,20 @@ async function init(){
       '<br>このままでは注文がスプレッドシートに保存されません。');
   }else{
     try{
-      const d = await (await fetch(CONFIG.GAS_URL)).json();
+      const r = await fetch(CONFIG.GAS_URL);
+      const txt = await r.text();
+      if(txt.trim().charAt(0) === '<') throw new Error('html');
+      const d = JSON.parse(txt);
       if(!d.ok) throw new Error('サーバーがエラーを返しました');
       state.online = true;
+      /* 再デプロイ忘れの検出。版が古いと注文時に失敗します */
+      if(d.version !== EXPECT_VERSION){
+        diag('warn', 'GASが古いバージョンのままです',
+          '注文は失敗する可能性があります。<br>' +
+          'Apps Script の「デプロイを管理 → 編集 → バージョン：<b style="display:inline">新バージョン</b> → デプロイ」' +
+          'を実行してください。<br>' +
+          '<span style="opacity:.8">サーバー側 ' + esc(d.version || '不明') + ' ／ この画面 ' + EXPECT_VERSION + '</span>');
+      }
       if(d.products && d.products.length) state.products = d.products;
       if(d.groups) state.groups = d.groups;
       if(d.receiveMethods && d.receiveMethods.length) state.recvAll = d.receiveMethods;
@@ -897,9 +951,15 @@ async function init(){
         }
       }
     }catch(e){
-      diag('bad', 'サーバーに接続できません',
-        'GASの「アクセスできるユーザー」が<b style="display:inline">全員</b>になっているか、' +
-        'コード変更後に再デプロイしたかをご確認ください。<br>このままでは注文が保存されません。');
+      if(String(e.message) === 'html'){
+        diag('bad', 'GASの公開設定が正しくありません',
+          'デプロイの「アクセスできるユーザー」が<b style="display:inline">全員</b>になっていません。' +
+          'ログイン画面が返ってきています。<br>このままでは注文が保存されません。');
+      }else{
+        diag('bad', 'サーバーに接続できません',
+          'GASのURLが正しいか、コード変更後に再デプロイしたかをご確認ください。' +
+          '<br>このままでは注文が保存されません。');
+      }
     }
   }
 
@@ -943,12 +1003,8 @@ async function init(){
 async function lookup(){
   if(!state.online) return;
   try{
-    const res = await fetch(CONFIG.GAS_URL, {
-      method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body: JSON.stringify({action:'lookup', idToken: state.idToken,
-                            userId: state.profile ? state.profile.userId : ''})
-    });
-    const d = await res.json();
+    const d = await postGas({action:'lookup', idToken: state.idToken,
+                             userId: state.profile ? state.profile.userId : ''});
     if(!d.ok) return;
 
     state.tags = d.tags || [];
@@ -1008,10 +1064,25 @@ $('hist').addEventListener('click', e => {
 $('btn-confirm').addEventListener('click', openSheet);
 $('btn-back').addEventListener('click', () => $('sheet').classList.remove('show'));
 $('btn-send').addEventListener('click', send);
-$('btn-close').addEventListener('click', () => {
-  if(window.liff && liff.isInClient && liff.isInClient()) liff.closeWindow();
-  else location.reload();
-});
+/* 注文後は画面を閉じます。閉じられない環境（外部ブラウザ等）だけ案内を出します */
+function closeApp(){
+  try{
+    if(window.liff && typeof liff.closeWindow === 'function'){
+      liff.closeWindow();
+      /* closeWindow が効かない環境向けの保険 */
+      setTimeout(() => {
+        $('done-msg').textContent = 'この画面は閉じていただいて大丈夫です。';
+        $('btn-close').textContent = '閉じられない場合はタブを閉じてください';
+        $('btn-close').disabled = true;
+      }, 900);
+      return;
+    }
+  }catch(e){ /* 下の案内へ */ }
+  $('done-msg').textContent = 'この画面は閉じていただいて大丈夫です。';
+  $('btn-close').textContent = '閉じられない場合はタブを閉じてください';
+  $('btn-close').disabled = true;
+}
+$('btn-close').addEventListener('click', closeApp);
 init();
 </script>
 </body>
